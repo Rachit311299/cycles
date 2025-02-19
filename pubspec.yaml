@@ -62,7 +62,7 @@ flutter:
   
   assets:
     - assets/fonts/  # Ensure fonts are placed in this folder
-
+    - assets/images/  # Ensure images are placed in this folder
   fonts:
     - family: PoetsenOne
       fonts:

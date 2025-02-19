@@ -43,7 +43,7 @@ class _CustomButtonState extends State<CustomButton>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   static const Duration _animationDuration = Duration(milliseconds: 80);
-  static const double _defaultElevation = 6.0;
+  static const double _defaultElevation = 4.0;
 
   @override
   void initState() {
@@ -111,6 +111,14 @@ class _CustomButtonState extends State<CustomButton>
                     decoration: BoxDecoration(
                       color: bottomColor,
                       borderRadius: BorderRadius.circular(widget.cornerRadius),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.25),
+                          offset: const Offset(0, 2),
+                          blurRadius: 1.8,
+                          spreadRadius: 0.1,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -148,21 +156,28 @@ class _CustomButtonState extends State<CustomButton>
           const SizedBox(width: 8),
           Text(
             widget.text!,
-            style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PoetsenOne',),
-            
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontFamily: 'PoetsenOne',
+            ),
           ),
         ],
       );
-    } 
+    }
     // If only icon
     else if (widget.icon != null) {
       return Icon(widget.icon, color: Colors.white);
-    } 
+    }
     // If only text
     else if (widget.text != null) {
       return Text(
         widget.text!,
-        style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'PoetsenOne',),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontFamily: 'PoetsenOne',
+        ),
       );
     }
     // No icon/text
@@ -172,9 +187,7 @@ class _CustomButtonState extends State<CustomButton>
   /// Simple helper to darken the original button color
   Color _darkenColor(Color color, double amount) {
     final hsl = HSLColor.fromColor(color);
-    final darker = hsl.withLightness(
-      (hsl.lightness - amount).clamp(0.0, 1.0),
-    );
+    final darker = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
     return darker.toColor();
   }
 }
