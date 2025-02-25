@@ -7,7 +7,11 @@ import 'package:cycles/widgets/settingspage.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  runApp(ProviderScope(child: MyApp()));
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {
