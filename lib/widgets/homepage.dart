@@ -2,9 +2,7 @@ import 'package:cycles/widgets/custom_button.dart';
 import 'package:cycles/widgets/custom_profile_button.dart';
 import 'package:cycles/widgets/cycle_card_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:cycles/widgets/plant_cycle_view.dart';
 import 'package:cycles/widgets/cycle_view.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cycles/providers/cycle_provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -172,8 +170,8 @@ class HomePage extends StatelessWidget {
                       backgroundImage: 'assets/images/plant_cycle.jpg',
                       textColor: const Color(0xFFF8FD78),
                       onTap: () {
-                        Navigator.push(
-                          context,
+                        print('Plant Cycle Card Tapped');
+                        Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => CycleView(
                               title: 'Plant Cycle',

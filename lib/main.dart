@@ -21,12 +21,12 @@ class MyApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Cycles',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme, // Light theme
       darkTheme: AppTheme.darkTheme, // Dark theme
       themeMode: themeMode, // Automatically switches between light & dark mode
-      home:  HomePage(), // Your main screen
+      home: const HomePage(), // Your main screen
     );
   }
 }

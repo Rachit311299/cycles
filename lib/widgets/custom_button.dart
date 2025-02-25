@@ -25,7 +25,7 @@ class CustomButton extends StatefulWidget {
   final VoidCallback? onPressed;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.height,
     required this.width,
     required this.cornerRadius,
@@ -33,7 +33,7 @@ class CustomButton extends StatefulWidget {
     this.text,
     this.icon,
     this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomButton> createState() => _CustomButtonState();
