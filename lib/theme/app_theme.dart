@@ -22,8 +22,6 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: Colors.green,      
         onPrimary: Colors.white,
-        background: _lightBackgroundColor,
-        onBackground: _lightTextColor,
         surface: _lightOverlayColor,
         onSurface: _lightTextColor,
       ),
@@ -51,8 +49,6 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: Colors.green,
         onPrimary: Colors.white,
-        background: _darkBackgroundColor,
-        onBackground: _darkTextColor,
         surface: _darkOverlayColor,
         onSurface: _darkTextColor,
       ),

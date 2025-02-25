@@ -170,8 +170,8 @@ class HomePage extends StatelessWidget {
                       backgroundImage: 'assets/images/plant_cycle.jpg',
                       textColor: const Color(0xFFF8FD78),
                       onTap: () {
-                        Navigator.push(
-                          context,
+                        print('Plant Cycle Card Tapped');
+                        Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => CycleView(
                               title: 'Plant Cycle',
