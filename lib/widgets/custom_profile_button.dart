@@ -6,11 +6,11 @@ class ProfileButton extends StatelessWidget {
   final int level;
 
   const ProfileButton({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.xpProgress,
     required this.level,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

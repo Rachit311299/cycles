@@ -63,6 +63,7 @@ class _CycleCardState extends State<CycleCard>
     final totalHeight = _cardHeight + _defaultElevation;
 
     return GestureDetector(
+      onTap: widget.onTap,
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,

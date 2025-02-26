@@ -3,6 +3,9 @@ import 'package:cycles/widgets/custom_profile_button.dart';
 import 'package:cycles/widgets/cycle_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cycles/widgets/cycle_view.dart';
+import 'package:cycles/providers/cycle_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -166,17 +169,20 @@ class HomePage extends StatelessWidget {
                     CycleCard(
                       title: 'Plant Cycle',
                       backgroundImage: 'assets/images/plant_cycle.jpg',
-                      textColor: Color(0xFFF8FD78),
+                      textColor: const Color(0xFFF8FD78),
+                      onTap: () => context.push('/plant-cycle'),
                     ),
                     CycleCard(
                       title: 'Water Cycle',
                       backgroundImage: 'assets/images/water_cycle.jpg',
-                      textColor: Color(0xFFD7EEFC),
+                      textColor: const Color(0xFFD7EEFC),
+                      onTap: () => context.push('/water-cycle'),
                     ),
                     CycleCard(
                       title: 'Rock Cycle',
                       backgroundImage: 'assets/images/rock_cycle.jpg',
-                      textColor: Color(0xFFF7DB6A),
+                      textColor: const Color(0xFFF7DB6A),
+                      onTap: () => context.push('/rock-cycle'),
                     ),
                   ],
                 ),
