@@ -7,44 +7,62 @@ import './custom_button.dart';
 class CycleView extends ConsumerWidget {
   final String title;
   final Color backgroundColor;
+  final Color progressBarColor;
+  final Color imageBackgroundColor;
+  final Color buttonColor;
   final StateNotifierProvider<CycleNotifier, int> cycleProvider;
 
   const CycleView({
     Key? key,
     required this.title,
     required this.backgroundColor,
+    required this.progressBarColor,
+    required this.imageBackgroundColor,
+    required this.buttonColor,
     required this.cycleProvider,
   }) : super(key: key);
 
   Widget _buildImage(String imageAsset) {
-    return Image.asset(
-      imageAsset,
-      fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: Colors.grey[200],
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.image_not_supported,
-                  size: 48,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Image not available',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
+    return Center(
+      child: Stack(
+        alignment: Alignment.center,
+        fit: StackFit.expand,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+            child: Image.asset(
+              imageAsset,
+              fit: BoxFit.contain,
+              alignment: Alignment.center,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: imageBackgroundColor.withOpacity(0.15),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image_not_supported,
+                          size: 48,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Image not available',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -90,8 +108,8 @@ class CycleView extends ConsumerWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.grey.withOpacity(0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Color(0xFF93D253),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progressBarColor,
                         ),
                         minHeight: 8,
                       ),
@@ -109,10 +127,10 @@ class CycleView extends ConsumerWidget {
                   children: [
                     // Stage image - increased height
                     Container(
-                      height: MediaQuery.of(context).size.height * 0.45, // 45% of screen height
-                      width: MediaQuery.of(context).size.width * 0.85, // 85% of screen width
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      width: MediaQuery.of(context).size.width * 0.85,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: imageBackgroundColor.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -124,7 +142,16 @@ class CycleView extends ConsumerWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: _buildImage(currentStage.imageAsset),
+                        child: Container(
+                          color: imageBackgroundColor.withOpacity(0.15),
+                          child: Center(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.75,
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              child: _buildImage(currentStage.imageAsset),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     const Spacer(),
@@ -214,7 +241,7 @@ class CycleView extends ConsumerWidget {
                               height: 56,
                               width: 56,
                               cornerRadius: 12,
-                              buttonColor: const Color(0xFF93D253),
+                              buttonColor: buttonColor,
                               icon: Icons.arrow_back_ios_new,
                               onPressed: () => cycleNotifier.previousStage(),
                             )
@@ -227,7 +254,7 @@ class CycleView extends ConsumerWidget {
                               height: 56,
                               width: 56,
                               cornerRadius: 12,
-                              buttonColor: const Color(0xFF93D253),
+                              buttonColor: buttonColor,
                               icon: Icons.arrow_forward_ios,
                               onPressed: () => cycleNotifier.nextStage(),
                             )
@@ -236,7 +263,7 @@ class CycleView extends ConsumerWidget {
                               height: 56,
                               width: 120,
                               cornerRadius: 12,
-                              buttonColor: const Color(0xFF93D253),
+                              buttonColor: buttonColor,
                               text: 'Complete',
                               onPressed: () {
                                 // Reset the state
