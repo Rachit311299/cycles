@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/cycle_provider.dart';
 import './homepage.dart';
 import './custom_button.dart';
@@ -74,13 +75,27 @@ class CycleView extends ConsumerWidget {
     
     // Add null check and boundary check
     if (currentStageIndex >= stages.length) {
-      // Reset to last valid index
       ref.read(cycleProvider.notifier).reset();
+      context.go('/');
       return const SizedBox.shrink();
     }
 
     final currentStage = stages[currentStageIndex];
     final progress = (currentStageIndex + 1) / stages.length;
+
+    void _handleClose() {
+      ref.read(cycleProvider.notifier).reset();
+      if (context.mounted) {
+        context.go('/');
+      }
+    }
+
+    void _handleComplete() {
+      ref.read(cycleProvider.notifier).reset();
+      if (context.mounted) {
+        context.go('/');
+      }
+    }
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -94,13 +109,7 @@ class CycleView extends ConsumerWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.black87),
-                    onPressed: () {
-                      ref.read(cycleProvider.notifier).reset();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => const HomePage()),
-                        (route) => false,
-                      );
-                    },
+                    onPressed: _handleClose,
                   ),
                   Expanded(
                     child: ClipRRect(
@@ -265,15 +274,7 @@ class CycleView extends ConsumerWidget {
                               cornerRadius: 12,
                               buttonColor: buttonColor,
                               text: 'Complete',
-                              onPressed: () {
-                                // Reset the state
-                                ref.read(cycleProvider.notifier).reset();
-                                // Navigate back to home
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(builder: (context) => const HomePage()),
-                                  (route) => false,
-                                );
-                              },
+                              onPressed: _handleComplete,
                             ),
                         ],
                       ),

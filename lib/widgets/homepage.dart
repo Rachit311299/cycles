@@ -170,58 +170,19 @@ class HomePage extends StatelessWidget {
                       title: 'Plant Cycle',
                       backgroundImage: 'assets/images/plant_cycle.jpg',
                       textColor: const Color(0xFFF8FD78),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CycleView(
-                              title: 'Plant Cycle',
-                              backgroundColor: const Color(0xFFE8F3D6),
-                              progressBarColor: const Color(0xFF93D253),
-                              imageBackgroundColor: const Color(0xFF93D253),
-                              buttonColor: const Color(0xFF93D253),
-                              cycleProvider: plantCycleProvider,
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: () => context.push('/plant-cycle'),
                     ),
                     CycleCard(
                       title: 'Water Cycle',
                       backgroundImage: 'assets/images/water_cycle.jpg',
                       textColor: const Color(0xFFD7EEFC),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CycleView(
-                              title: 'Water Cycle',
-                              backgroundColor: const Color(0xFFE1F5FE),
-                              progressBarColor: const Color(0xFF4B70EA),
-                              imageBackgroundColor: const Color(0xFF4B70EA),
-                              buttonColor: const Color(0xFF4B70EA),
-                              cycleProvider: waterCycleProvider,
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: () => context.push('/water-cycle'),
                     ),
                     CycleCard(
                       title: 'Rock Cycle',
                       backgroundImage: 'assets/images/rock_cycle.jpg',
                       textColor: const Color(0xFFF7DB6A),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CycleView(
-                              title: 'Rock Cycle',
-                              backgroundColor: const Color(0xFFF5E6CA),
-                              progressBarColor: const Color(0xFFF7DB6A),
-                              imageBackgroundColor: const Color(0xFFF7DB6A),
-                              buttonColor: const Color(0xFFF7DB6A),
-                              cycleProvider: rockCycleProvider,
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: () => context.push('/rock-cycle'),
                     ),
                   ],
                 ),
