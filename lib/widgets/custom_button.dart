@@ -66,13 +66,17 @@ class _CustomButtonState extends State<CustomButton>
     _controller.forward();
   }
 
-  void _onTapUp(TapUpDetails details) {
-    // Wait briefly so the pressed-down animation is visible
-    Future.delayed(_animationDuration, () {
+void _onTapUp(TapUpDetails details) {
+  // Wait briefly so the pressed-down animation is visible
+  Future.delayed(_animationDuration, () {
+    if (mounted) {
       _controller.reverse();
-    });
-    widget.onPressed?.call();
-  }
+    }
+  });
+  
+  // Fire onPressed
+  widget.onPressed?.call();
+}
 
   void _onTapCancel() {
     _controller.reverse();

@@ -2,6 +2,7 @@ import 'package:cycles/widgets/custom_button.dart';
 import 'package:cycles/widgets/custom_profile_button.dart';
 import 'package:cycles/widgets/cycle_card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class HomePage extends StatelessWidget {
         return Container(
           height: 300,
           decoration: BoxDecoration(
-            color: const Color(0xFFDEDEDE),
+            color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(25.0)),
           ),
           child: Column(
@@ -28,9 +29,8 @@ class HomePage extends StatelessWidget {
                 
                 style: TextStyle(
                   fontFamily: 'PoetsenOne',
-                  
                   fontSize: 36,
-                  color: const Color(0xFF333333),
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               const SizedBox(height: 20),
@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                     buttonColor: const Color(0xFF93D253),
                     icon: Icons.settings,
                     onPressed: () {
-                      // Your settings action
+                      context.push('/settings');
                     },
                   ),
                 ],
