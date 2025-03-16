@@ -23,6 +23,7 @@ class CustomButton extends StatefulWidget {
   final String? text;
   final IconData? icon;
   final VoidCallback? onPressed;
+  final Widget? child;
 
   const CustomButton({
     super.key,
@@ -33,6 +34,7 @@ class CustomButton extends StatefulWidget {
     this.text,
     this.icon,
     this.onPressed,
+    this.child,
   });
 
   @override
@@ -97,7 +99,7 @@ void _onTapUp(TapUpDetails details) {
           // Offset the top layer downward by some fraction of _defaultElevation
           final offset = _controller.value * _defaultElevation;
 
-          // Darken the bottom layer color to create a “shadow” effect
+          // Darken the bottom layer color to create a "shadow" effect
           final bottomColor = _darkenColor(widget.buttonColor, 0.15);
 
           return SizedBox(
@@ -105,7 +107,7 @@ void _onTapUp(TapUpDetails details) {
             width: widget.width,
             child: Stack(
               children: [
-                // Bottom layer (shadow or “3D” base)
+                // Bottom layer (shadow or "3D" base)
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -151,6 +153,9 @@ void _onTapUp(TapUpDetails details) {
 
   /// Builds the button content based on text + icon presence.
   Widget _buildButtonContent() {
+    if (widget.child != null) {
+      return widget.child!;
+    }
     // If both text and icon are provided, arrange them horizontally
     if (widget.text != null && widget.icon != null) {
       return Row(
