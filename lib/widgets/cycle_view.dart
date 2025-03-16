@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/cycle_provider.dart';
-import './homepage.dart';
 import './custom_button.dart';
 
 class CycleView extends ConsumerWidget {
@@ -11,6 +10,7 @@ class CycleView extends ConsumerWidget {
   final Color progressBarColor;
   final Color imageBackgroundColor;
   final Color buttonColor;
+  final String cycleType;
   final StateNotifierProvider<CycleNotifier, int> cycleProvider;
 
   const CycleView({
@@ -20,6 +20,7 @@ class CycleView extends ConsumerWidget {
     required this.progressBarColor,
     required this.imageBackgroundColor,
     required this.buttonColor,
+    required this.cycleType,
     required this.cycleProvider,
   }) : super(key: key);
 
@@ -86,14 +87,14 @@ class CycleView extends ConsumerWidget {
     void _handleClose() {
       ref.read(cycleProvider.notifier).reset();
       if (context.mounted) {
-        context.go('/');
+        context.pop();
       }
     }
 
     void _handleComplete() {
       ref.read(cycleProvider.notifier).reset();
       if (context.mounted) {
-        context.go('/');
+        context.pop();
       }
     }
 
