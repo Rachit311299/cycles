@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:just_audio/just_audio.dart'; // Import the just_audio package
 import '../providers/cycle_provider.dart';
 import './custom_button.dart';
 
-class CycleView extends ConsumerWidget {
+class CycleView extends ConsumerStatefulWidget {
   final String title;
   final Color backgroundColor;
   final Color progressBarColor;
@@ -24,6 +25,38 @@ class CycleView extends ConsumerWidget {
     required this.cycleProvider,
   }) : super(key: key);
 
+  @override
+  ConsumerState<CycleView> createState() => _CycleViewState();
+}
+
+class _CycleViewState extends ConsumerState<CycleView> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  String _currentLanguage = 'en'; // Default language is English
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playAudio(String audioAsset, String language) async {
+    try {
+      await _audioPlayer.setAsset(audioAsset);
+      await _audioPlayer.play();
+    } catch (e) {
+      debugPrint('Error playing audio: $e');
+      // Show a snackbar to notify the user of the error
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error playing audio: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Widget _buildImage(String imageAsset) {
     return Center(
       child: Stack(
@@ -31,14 +64,17 @@ class CycleView extends ConsumerWidget {
         fit: StackFit.expand,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32.0,
+              vertical: 16.0,
+            ),
             child: Image.asset(
               imageAsset,
               fit: BoxFit.contain,
               alignment: Alignment.center,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: imageBackgroundColor.withOpacity(0.15),
+                  color: widget.imageBackgroundColor.withOpacity(0.15),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -69,14 +105,14 @@ class CycleView extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentStageIndex = ref.watch(cycleProvider);
-    final cycleNotifier = ref.read(cycleProvider.notifier);
+  Widget build(BuildContext context) {
+    final currentStageIndex = ref.watch(widget.cycleProvider);
+    final cycleNotifier = ref.read(widget.cycleProvider.notifier);
     final stages = cycleNotifier.stages;
-    
+
     // Add null check and boundary check
     if (currentStageIndex >= stages.length) {
-      ref.read(cycleProvider.notifier).reset();
+      ref.read(widget.cycleProvider.notifier).reset();
       context.go('/');
       return const SizedBox.shrink();
     }
@@ -85,21 +121,21 @@ class CycleView extends ConsumerWidget {
     final progress = (currentStageIndex + 1) / stages.length;
 
     void _handleClose() {
-      ref.read(cycleProvider.notifier).reset();
+      ref.read(widget.cycleProvider.notifier).reset();
       if (context.mounted) {
         context.pop();
       }
     }
 
     void _handleComplete() {
-      ref.read(cycleProvider.notifier).reset();
+      ref.read(widget.cycleProvider.notifier).reset();
       if (context.mounted) {
         context.pop();
       }
     }
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: widget.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -119,7 +155,7 @@ class CycleView extends ConsumerWidget {
                         value: progress,
                         backgroundColor: Colors.grey.withOpacity(0.2),
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          progressBarColor,
+                          widget.progressBarColor,
                         ),
                         minHeight: 8,
                       ),
@@ -140,7 +176,7 @@ class CycleView extends ConsumerWidget {
                       height: MediaQuery.of(context).size.height * 0.45,
                       width: MediaQuery.of(context).size.width * 0.85,
                       decoration: BoxDecoration(
-                        color: imageBackgroundColor.withOpacity(0.3),
+                        color: widget.imageBackgroundColor.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -153,7 +189,7 @@ class CycleView extends ConsumerWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          color: imageBackgroundColor.withOpacity(0.15),
+                          color: widget.imageBackgroundColor.withOpacity(0.15),
                           child: Center(
                             child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.75,
@@ -193,9 +229,19 @@ class CycleView extends ConsumerWidget {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.volume_up),
+                                  icon: const Icon(Icons.volume_up,color: Colors.black87),
                                   onPressed: () {
-                                    // TODO: Implement audio playback
+                                    // Play English audio
+                                    // Play English audio
+                                    if (currentStage.audioAssets != null &&
+                                        currentStage.audioAssets!.containsKey(
+                                          'en',
+                                        )) {
+                                      _playAudio(
+                                        currentStage.audioAssets!['en']!,
+                                        'en',
+                                      );
+                                    }
                                   },
                                 ),
                               ],
@@ -227,9 +273,19 @@ class CycleView extends ConsumerWidget {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.volume_up),
+                                  icon: const Icon(Icons.volume_up,color: Colors.black87),
                                   onPressed: () {
-                                    // TODO: Implement audio playback
+                                    // Play Spanish audio
+                                    // Play English audio
+                                    if (currentStage.audioAssets != null &&
+                                        currentStage.audioAssets!.containsKey(
+                                          'es',
+                                        )) {
+                                      _playAudio(
+                                        currentStage.audioAssets!['es']!,
+                                        'es',
+                                      );
+                                    }
                                   },
                                 ),
                               ],
@@ -251,20 +307,20 @@ class CycleView extends ConsumerWidget {
                               height: 56,
                               width: 56,
                               cornerRadius: 12,
-                              buttonColor: buttonColor,
+                              buttonColor: widget.buttonColor,
                               icon: Icons.arrow_back_ios_new,
                               onPressed: () => cycleNotifier.previousStage(),
                             )
                           else
                             const SizedBox(width: 56),
-                          
+
                           // Next button or Complete button
                           if (currentStageIndex < stages.length - 1)
                             CustomButton(
                               height: 56,
                               width: 56,
                               cornerRadius: 12,
-                              buttonColor: buttonColor,
+                              buttonColor: widget.buttonColor,
                               icon: Icons.arrow_forward_ios,
                               onPressed: () => cycleNotifier.nextStage(),
                             )
@@ -273,7 +329,7 @@ class CycleView extends ConsumerWidget {
                               height: 56,
                               width: 120,
                               cornerRadius: 12,
-                              buttonColor: buttonColor,
+                              buttonColor: widget.buttonColor,
                               text: 'Complete',
                               onPressed: _handleComplete,
                             ),
@@ -289,4 +345,4 @@ class CycleView extends ConsumerWidget {
       ),
     );
   }
-} 
+}

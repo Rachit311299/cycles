@@ -46,6 +46,10 @@ final List<CycleStage> plantCycleStages = [
       'fr': 'Graines',
       'hi': 'बीज',
     },
+    audioAssets: {
+      'en': 'audio/plant_cycle/en/Pro-Seeds.mp3',
+      'es': 'audio/plant_cycle/es/Pro-Semilias.mp3',
+    },
   ),
   CycleStage(
     name: 'Germination',
@@ -55,6 +59,10 @@ final List<CycleStage> plantCycleStages = [
       'es': 'Germinación',
       'fr': 'Germination',
       'hi': 'अंकुरण',
+    },
+    audioAssets: {
+      'en': 'audio/plant_cycle/en/Pro-Germination.mp3',
+      'es': 'audio/plant_cycle/es/Pro-Germinacion.mp3',
     },
   ),
   CycleStage(
@@ -66,6 +74,10 @@ final List<CycleStage> plantCycleStages = [
       'fr': 'Plantule',
       'hi': 'अंकुर',
     },
+    audioAssets: {
+      'en': 'audio/plant_cycle/en/Pro-seedling.mp3',
+      'es': 'audio/plant_cycle/es/Pro-plantula.mp3',
+    },
   ),
   CycleStage(
     name: 'Adult Plant',
@@ -76,6 +88,11 @@ final List<CycleStage> plantCycleStages = [
       'fr': 'Plante Adulte',
       'hi': 'वयस्क पौधा',
     },
+    audioAssets: {
+      'en': 'audio/plant_cycle/en/Pro-Adultplant.mp3',
+      'es': 'audio/plant_cycle/es/Pro-planatadulta.mp3',
+    },
+    
   ),
   CycleStage(
     name: 'Flowering',
@@ -85,6 +102,10 @@ final List<CycleStage> plantCycleStages = [
       'es': 'Floración',
       'fr': 'Floraison',
       'hi': 'पुष्पण',
+    },
+    audioAssets: {
+      'en': 'audio/plant_cycle/en/Pro-Flowering.mp3',
+      'es': 'audio/plant_cycle/es/Pro-Floracion.mp3',
     },
   ),
 ];
