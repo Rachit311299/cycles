@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'custom_button.dart'; // Ensure this file contains the CustomButton widget
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cycles/providers/theme_notifier.dart';
+import 'custom_button.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the current theme mode to reflect it in the UI
+    final themeMode = ref.watch(themeModeProvider);
+    final isDarkMode = themeMode == ThemeMode.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -47,7 +53,14 @@ class SettingsPage extends StatelessWidget {
               padding: const EdgeInsets.only(left: 34.0, right: 10),
               child: _buildSettingItem(
                 'Dark Theme',
-                Switch(value: false, onChanged: (value) {}),
+                Switch(
+                  value: isDarkMode,
+                  onChanged: (value) {
+                    // Toggle theme using the theme notifier
+                    ref.read(themeModeProvider.notifier).toggleTheme(value);
+                  },
+                  activeColor: const Color(0xFF93D253),
+                ),
               ),
             ),
             Divider(

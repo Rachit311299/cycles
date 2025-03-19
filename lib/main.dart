@@ -111,8 +111,8 @@ class MyApp extends ConsumerWidget {
         path: '/water-cycle',
         builder: (context, state) => const CycleMenuView(
           title: 'Water Cycle',
-          backgroundColor: Color(0xFFE1F5FE),
-          buttonColor: Color(0xFF4B70EA),
+          backgroundColor: Color(0xFFB9F5FF),
+          buttonColor: Color(0xFF22A9E0),
           cycleType: 'water',
         ),
       ),
@@ -120,10 +120,10 @@ class MyApp extends ConsumerWidget {
         path: '/water-cycle/learn',
         builder: (context, state) => CycleView(
           title: 'Water Cycle',
-          backgroundColor: const Color(0xFFE1F5FE),
+          backgroundColor: const Color(0xFFB9F5FF),
           progressBarColor: const Color(0xFF4B70EA),
-          imageBackgroundColor: const Color(0xFF4B70EA),
-          buttonColor: const Color(0xFF4B70EA),
+          imageBackgroundColor: const Color(0xFF22A9E0),
+          buttonColor: const Color(0xFF22A9E0),
           cycleType: 'water',
           cycleProvider: waterCycleProvider,
         ),
@@ -132,8 +132,8 @@ class MyApp extends ConsumerWidget {
         path: '/water-cycle/games',
         builder: (context, state) => CycleGamesMenu(
           cycleTitle: 'Water Cycle',
-          backgroundColor: const Color(0xFFE1F5FE),
-          buttonColor: const Color(0xFF4B70EA),
+          backgroundColor: const Color(0xFFB9F5FF),
+          buttonColor: const Color(0xFF22A9E0),
           games: [
             GameOption(
               title: 'Cycle Builder',
@@ -151,8 +151,8 @@ class MyApp extends ConsumerWidget {
             final cycleNotifier = ref.read(waterCycleProvider.notifier);
             return CycleBuilderGame(
               title: 'Water Cycle Builder',
-              backgroundColor: const Color(0xFFE1F5FE),
-              buttonColor: const Color(0xFF4B70EA),
+              backgroundColor: const Color(0xFFB9F5FF),
+              buttonColor: const Color(0xFF22A9E0),
               stages: cycleNotifier.stages.map((stage) => CycleStageItem(
                 name: stage.name,
                 imageAsset: stage.imageAsset,
@@ -168,7 +168,7 @@ class MyApp extends ConsumerWidget {
         builder: (context, state) => const CycleMenuView(
           title: 'Rock Cycle',
           backgroundColor: Color(0xFFF5E6CA),
-          buttonColor: Color(0xFFF7DB6A),
+          buttonColor: Color(0xFF996A42),
           cycleType: 'rock',
         ),
       ),
@@ -177,9 +177,9 @@ class MyApp extends ConsumerWidget {
         builder: (context, state) => CycleView(
           title: 'Rock Cycle',
           backgroundColor: const Color(0xFFF5E6CA),
-          progressBarColor: const Color(0xFFF7DB6A),
-          imageBackgroundColor: const Color(0xFFF7DB6A),
-          buttonColor: const Color(0xFFF7DB6A),
+          progressBarColor: const Color(0xFFC58956),
+          imageBackgroundColor: const Color(0xFF996A42),
+          buttonColor: const Color(0xFF996A42),
           cycleType: 'rock',
           cycleProvider: rockCycleProvider,
         ),
@@ -189,7 +189,7 @@ class MyApp extends ConsumerWidget {
         builder: (context, state) => CycleGamesMenu(
           cycleTitle: 'Rock Cycle',
           backgroundColor: const Color(0xFFF5E6CA),
-          buttonColor: const Color(0xFFF7DB6A),
+          buttonColor: const Color(0xFF996A42),
           games: [
             GameOption(
               title: 'Cycle Builder',
@@ -208,7 +208,7 @@ class MyApp extends ConsumerWidget {
             return CycleBuilderGame(
               title: 'Rock Cycle Builder',
               backgroundColor: const Color(0xFFF5E6CA),
-              buttonColor: const Color(0xFFF7DB6A),
+              buttonColor: const Color(0xFF996A42),
               stages: cycleNotifier.stages.map((stage) => CycleStageItem(
                 name: stage.name,
                 imageAsset: stage.imageAsset,

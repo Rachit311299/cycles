@@ -89,7 +89,7 @@ class _CycleCardState extends State<CycleCard>
                         image: AssetImage(widget.backgroundImage),
                         fit: BoxFit.fill,
                         colorFilter: ColorFilter.mode(
-                          Colors.black.withOpacity(0.4),
+                          Colors.black.withOpacity(0.6),
                           BlendMode.darken,
                         ),
                       ),
