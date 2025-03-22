@@ -3,6 +3,7 @@ import 'package:cycles/widgets/custom_profile_button.dart';
 import 'package:cycles/widgets/cycle_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -21,11 +22,11 @@ class HomePage extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(25.0)),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 16),
               Text(
                 'Language',
-                
                 style: TextStyle(
                   fontFamily: 'PoetsenOne',
                   fontSize: 36,
@@ -33,57 +34,80 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                    childAspectRatio: 2.55,
-                    children: [
-                      CustomButton(
-                        height: 60,
-                        width: 140,
-                        cornerRadius: 12,
-                        buttonColor: const Color(0xFF4B70EA),
-                        text: 'English',
-                        onPressed: () {
-                          // Handle language selection
-                        },
-                      ),
-                      CustomButton(
-                        height: 60,
-                        width: 140,
-                        cornerRadius: 12,
-                        buttonColor: const Color(0xFF4B70EA),
-                        text: 'French',
-                        onPressed: () {
-                          // Handle language selection
-                        },
-                      ),
-                      CustomButton(
-                        height: 60,
-                        width: 140,
-                        cornerRadius: 12,
-                        buttonColor: const Color(0xFF4B70EA),
-                        text: 'Spanish',
-                        onPressed: () {
-                          // Handle language selection
-                        },
-                      ),
-                      CustomButton(
-                        height: 60,
-                        width: 140,
-                        cornerRadius: 12,
-                        buttonColor: const Color(0xFF4B70EA),
-                        text: 'Hindi',
-                        onPressed: () {
-                          // Handle language selection
-                        },
-                      ),
-                    ],
-                  ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CustomButton(
+                              height: 60,
+                              width: double.infinity,
+                              cornerRadius: 12,
+                              buttonColor: const Color(0xFF4B70EA),
+                              text: 'English',
+                              onPressed: () {
+                                // Handle language selection
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CustomButton(
+                              height: 60,
+                              width: double.infinity,
+                              cornerRadius: 12,
+                              buttonColor: const Color(0xFF4B70EA),
+                              text: 'French',
+                              onPressed: () {
+                                // Handle language selection
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CustomButton(
+                              height: 60,
+                              width: double.infinity,
+                              cornerRadius: 12,
+                              buttonColor: const Color(0xFF4B70EA),
+                              text: 'Spanish',
+                              onPressed: () {
+                                // Handle language selection
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CustomButton(
+                              height: 60,
+                              width: double.infinity,
+                              cornerRadius: 12,
+                              buttonColor: const Color(0xFF4B70EA),
+                              text: 'Hindi',
+                              onPressed: () {
+                                // Handle language selection
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
