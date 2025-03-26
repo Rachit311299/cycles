@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cycles/widgets/homepage.dart';
 import 'package:cycles/widgets/settingspage.dart';
+import 'package:cycles/widgets/profilepage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cycles/widgets/cycle_view.dart';
 import 'package:cycles/providers/cycle_provider.dart';
@@ -36,7 +37,10 @@ class MyApp extends ConsumerWidget {
         path: '/settings',
         builder: (context, state) => SettingsPage(),
       ),
-      // Plant Cycle Routes
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
       GoRoute(
         path: '/plant-cycle',
         builder: (context, state) => const CycleMenuView(

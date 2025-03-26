@@ -141,11 +141,16 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                   // Profile Button (center)
-                  ProfileButton(
-                    imageUrl:
-                        'https://img.freepik.com/free-vector/flat-style-woman-avatar_90220-2876.jpg',
-                    xpProgress: 0.3, // 30% XP progress
-                    level: 5,        // Example level
+                  GestureDetector(
+                    onTap: () {
+                      context.push('/profile');
+                    },
+                    child: const ProfileButton(
+                      imageUrl:
+                          'https://img.freepik.com/free-vector/flat-style-woman-avatar_90220-2876.jpg',
+                      xpProgress: 0.3, // 30% XP progress
+                      level: 5,        // Example level
+                    ),
                   ),
                   // Settings Button
                   CustomButton(
