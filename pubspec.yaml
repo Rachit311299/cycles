@@ -68,6 +68,10 @@ flutter:
     - assets/images/water_cycle/
     - assets/images/rock_cycle/
     - assets/audio/
+    - assets/audio/plant_cycle/
+    - assets/audio/plant_cycle/en/
+    - assets/audio/plant_cycle/es/
+    - assets/audio/plant_cycle/stages/
   fonts:
     - family: PoetsenOne
       fonts:

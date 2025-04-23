@@ -110,17 +110,17 @@ class _CycleViewState extends ConsumerState<CycleView> {
   String _getExplanationPath(String stageName, int index) {
     switch (stageName) {
       case 'Seeds':
-        return 'audio/plant_cycle/stages/PCEX-S1-Seeds.mp3';
+        return 'assets/audio/plant_cycle/stages/PCEX-S1-Seeds.mp3';
       case 'Germination':
-        return 'audio/plant_cycle/stages/PCEX-S2-Germination.mp3';
+        return 'assets/audio/plant_cycle/stages/PCEX-S2-Germination.mp3';
       case 'Seedling':
-        return 'audio/plant_cycle/stages/PCEX-S3-Seedling.mp3';
+        return 'assets/audio/plant_cycle/stages/PCEX-S3-Seedling.mp3';
       case 'Adult Plant':
-        return 'audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3';
+        return 'assets/audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3';
       case 'Flowering':
-        return 'audio/plant_cycle/stages/PCEX-S5-Flowering.mp3';
+        return 'assets/audio/plant_cycle/stages/PCEX-S5-Flowering.mp3';
       default:
-        return 'audio/plant_cycle/stages/PCEX-S${index + 1}-${stageName.replaceAll(' ', '')}.mp3';
+        return 'assets/plant_cycle/stages/PCEX-S${index + 1}-${stageName.replaceAll(' ', '')}.mp3';
     }
   }
 
