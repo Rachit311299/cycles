@@ -4,6 +4,7 @@ class CycleStage {
   final String imageAsset;
   final Map<String, String> translations;
   final Map<String, String>? audioAssets;
+  final String? explanationAudio;
 
   CycleStage({
     required this.name,
@@ -11,5 +12,6 @@ class CycleStage {
     required this.imageAsset,
     required this.translations,
     this.audioAssets,
+    this.explanationAudio,
   });
 }

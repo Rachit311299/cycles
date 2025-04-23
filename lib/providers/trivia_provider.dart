@@ -47,10 +47,74 @@ final waterCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
       correctAnswerIndex: 2,
       explanation: 'Evaporation occurs when liquid water is heated by the sun and turns into water vapor.',
     ),
-    // Add more water cycle questions...
+    TriviaQuestion(
+      question: 'What is condensation in the water cycle?',
+      options: [
+        'Water vapor cooling and forming clouds',
+        'Water falling from clouds as rain',
+        'Water flowing in rivers',
+        'Ice melting into liquid water'
+      ],
+      correctAnswerIndex: 0,
+      explanation: 'Condensation happens when water vapor cools and changes from a gas back to a liquid, forming clouds in the atmosphere.',
+    ),
+    TriviaQuestion(
+      question: 'Which of these is NOT a form of precipitation?',
+      options: [
+        'Rain',
+        'Snow',
+        'Hail',
+        'Evaporation'
+      ],
+      correctAnswerIndex: 3,
+      explanation: 'Evaporation is the process of water turning into vapor, while precipitation refers to water falling from clouds as rain, snow, sleet, or hail.',
+    ),
+    TriviaQuestion(
+      question: 'What drives the water cycle?',
+      options: [
+        'Wind',
+        'The sun\'s energy',
+        'Earth\'s rotation',
+        'Ocean currents'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'The sun\'s energy powers the water cycle by heating water to cause evaporation, which starts the cycle.',
+    ),
+    TriviaQuestion(
+      question: 'What is transpiration?',
+      options: [
+        'Water evaporating from soil',
+        'Water falling as rain',
+        'Water released by plants into the air',
+        'Water flowing in rivers'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'Transpiration is the process where plants release water vapor through small pores in their leaves.',
+    ),
+    TriviaQuestion(
+      question: 'What happens during infiltration?',
+      options: [
+        'Water evaporates from the ocean',
+        'Water seeps into the ground',
+        'Water forms clouds',
+        'Water falls as precipitation'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Infiltration occurs when water soaks into the soil and becomes groundwater.',
+    ),
+    TriviaQuestion(
+      question: 'Which part of the water cycle returns water to the oceans?',
+      options: [
+        'Evaporation',
+        'Condensation',
+        'Runoff',
+        'Precipitation'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'Runoff is the flow of water over land, which eventually returns water to streams, rivers, and ultimately to oceans.',
+    ),
   ];
 });
-
 final rockCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
   return [
     TriviaQuestion(

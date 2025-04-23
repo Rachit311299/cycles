@@ -1,3 +1,4 @@
+import 'package:cycles/models/cycle_stage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,8 +58,8 @@ class _CycleViewState extends ConsumerState<CycleView> {
 
       // Create and prepare an AudioPlayer for each stage
       for (int i = 0; i < stages.length; i++) {
-        final stageName = stages[i].name;
-        final explanationPath = _getExplanationPath(stageName, i);
+        final stage = stages[i];
+        final explanationPath = _getExplanationPath(stage, i);
 
         // Create new player for this stage
         final player = AudioPlayer();
@@ -78,10 +79,12 @@ class _CycleViewState extends ConsumerState<CycleView> {
         });
       }
 
-      // Preload complete, play first stage audio
+      // Just preload, don't auto-play
       final currentIndex = ref.read(widget.cycleProvider);
       _lastPlayedStageIndex = currentIndex;
-      _playExplanationAudio(currentIndex);
+
+      // Don't auto-play anymore
+      // _playExplanationAudio(currentIndex);
     } catch (e) {
       debugPrint('Error preloading assets: $e');
       if (mounted) {
@@ -107,21 +110,14 @@ class _CycleViewState extends ConsumerState<CycleView> {
     }
   }
 
-  String _getExplanationPath(String stageName, int index) {
-    switch (stageName) {
-      case 'Seeds':
-        return 'assets/audio/plant_cycle/stages/PCEX-S1-Seeds.mp3';
-      case 'Germination':
-        return 'assets/audio/plant_cycle/stages/PCEX-S2-Germination.mp3';
-      case 'Seedling':
-        return 'assets/audio/plant_cycle/stages/PCEX-S3-Seedling.mp3';
-      case 'Adult Plant':
-        return 'assets/audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3';
-      case 'Flowering':
-        return 'assets/audio/plant_cycle/stages/PCEX-S5-Flowering.mp3';
-      default:
-        return 'assets/plant_cycle/stages/PCEX-S${index + 1}-${stageName.replaceAll(' ', '')}.mp3';
+  String _getExplanationPath(CycleStage stage, int index) {
+    // If explanationAudio is provided in the stage, use it
+    if (stage.explanationAudio != null) {
+      return stage.explanationAudio!;
     }
+
+    // Fallback to default pattern if explanationAudio is not available
+    return 'assets/audio/${widget.cycleType}_cycle/stages/${widget.cycleType.toUpperCase()}EX-S${index + 1}-${stage.name.replaceAll(' ', '')}.mp3';
   }
 
   @override
@@ -155,8 +151,18 @@ class _CycleViewState extends ConsumerState<CycleView> {
     });
   }
 
-  Future<void> _playExplanationAudio(int stageIndex) async {
+  Future<void> _toggleExplanationAudio(int stageIndex) async {
     if (stageIndex >= _explanationPlayers.length) return;
+
+    // If already playing this stage's explanation
+    if (_isExplanationPlaying && _currentExplanationIndex == stageIndex) {
+      // Pause it
+      _explanationPlayers[stageIndex].pause();
+      setState(() {
+        _isExplanationPlaying = false;
+      });
+      return;
+    }
 
     // Stop any currently playing explanation audio
     if (_isExplanationPlaying && _currentExplanationIndex != null) {
@@ -285,11 +291,13 @@ class _CycleViewState extends ConsumerState<CycleView> {
     final cycleNotifier = ref.read(widget.cycleProvider.notifier);
     final stages = cycleNotifier.stages;
 
-    // Check if stage has changed and we need to play new audio
+    // Check if stage has changed - stop audio if it was playing
     if (currentStageIndex != _lastPlayedStageIndex && !_isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _stopAllAudio();
-        _playExplanationAudio(currentStageIndex);
+
+        // Don't auto-play, just update the index
+        _lastPlayedStageIndex = currentStageIndex;
       });
     }
 
@@ -366,42 +374,87 @@ class _CycleViewState extends ConsumerState<CycleView> {
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Column(
                         children: [
-                          // Stage image
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            decoration: BoxDecoration(
-                              color: widget.imageBackgroundColor.withOpacity(
-                                0.3,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 5),
+                          // Stage image with play/pause audio button
+                          Stack(
+                            children: [
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.45,
+                                width: MediaQuery.of(context).size.width * 0.85,
+                                decoration: BoxDecoration(
+                                  color: widget.imageBackgroundColor
+                                      .withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                color: widget.imageBackgroundColor.withOpacity(
-                                  0.15,
-                                ),
-                                child: Center(
-                                  child: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width *
-                                        0.75,
-                                    height:
-                                        MediaQuery.of(context).size.height *
-                                        0.4,
-                                    child: _buildImage(currentStage.imageAsset),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    color: widget.imageBackgroundColor
+                                        .withOpacity(0.15),
+                                    child: Center(
+                                      child: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                            0.75,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                            0.4,
+                                        child: _buildImage(
+                                          currentStage.imageAsset,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+
+                              // Play/Pause Explanation button
+                              Positioned(
+                                right: 10,
+                                bottom: 10,
+                                child: CustomButton(
+                                  height: 40,
+                                  width: 140,
+                                  cornerRadius: 20,
+                                  buttonColor: widget.buttonColor,
+                                  onPressed:
+                                      () => _toggleExplanationAudio(
+                                        currentStageIndex,
+                                      ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        _isExplanationPlaying &&
+                                                _currentExplanationIndex ==
+                                                    currentStageIndex
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      const Text(
+                                        'Explanation',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontFamily: 'PoetsenOne',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const Spacer(),
                           // Language sections
@@ -485,7 +538,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
                                   ),
                                   // Icon positioned to the right
                                   Positioned(
-                                    right: 50 ,
+                                    right: 50,
                                     child: IconButton(
                                       icon: const Icon(
                                         Icons.volume_up,
