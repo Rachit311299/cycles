@@ -51,6 +51,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Semilias.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S1-Seeds.mp3',
+    animationAsset: 'assets/animations/plantCycle_Stage 1.gif',
   ),
   CycleStage(
     name: 'Germination',
@@ -66,6 +67,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Germinacion.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S2-Germination.mp3',
+    animationAsset: 'assets/animations/plantCycle_Stage 2.gif',
   ),
   CycleStage(
     name: 'Seedling',
@@ -81,6 +83,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-plantula.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S3-Seedling.mp3',
+    animationAsset: 'assets/animations/plantCycle_Stage 3.gif',
   ),
   CycleStage(
     name: 'Adult Plant',
@@ -96,6 +99,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-planatadulta.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3',
+    animationAsset: 'assets/animations/plantCycle_Stage 4.gif',
 
     
   ),
@@ -113,6 +117,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Floracion.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S5-Flowering.mp3',
+    animationAsset: 'assets/animations/plantCycle_Stage 5.gif',
   ),
 ];
 
