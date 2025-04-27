@@ -51,7 +51,6 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Semilias.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S1-Seeds.mp3',
-    riveAsset: 'assets/animations/plant_cycle_animation.riv',
   ),
   CycleStage(
     name: 'Germination',
@@ -97,6 +96,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-planatadulta.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3',
+
     
   ),
   CycleStage(

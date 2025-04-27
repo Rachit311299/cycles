@@ -1,12 +1,13 @@
-import 'package:cycles/models/cycle_stage.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
+
+import '../models/cycle_stage.dart';
 import '../providers/cycle_provider.dart';
-import 'package:rive/rive.dart' as rive;
 import './custom_button.dart';
-import 'dart:async';
 
 class CycleView extends ConsumerStatefulWidget {
   final String title;
@@ -33,185 +34,114 @@ class CycleView extends ConsumerStatefulWidget {
 }
 
 class _CycleViewState extends ConsumerState<CycleView> {
-  final AudioPlayer _audioPlayer = AudioPlayer(); // For pronunciation
-  final List<AudioPlayer> _explanationPlayers =
-      []; // List of players for each stage
-  int _lastPlayedStageIndex = -1;
-  String? _errorMessage;
-  bool _isLoading = true;
+  // Audio
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  final List<AudioPlayer> _explanationPlayers = [];
   bool _isExplanationPlaying = false;
   int? _currentExplanationIndex;
+
+  // Loading & error
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  // Track last stage to reset audio on change
+  int _lastPlayedStageIndex = -1;
 
   @override
   void initState() {
     super.initState();
-    _preloadAssets();
+    _preloadAudio();
   }
 
-  Future<void> _preloadAssets() async {
-    setState(() {
-      _isLoading = true;
-    });
+  Future<void> _preloadAudio() async {
+    setState(() => _isLoading = true);
 
     try {
-      final cycleNotifier = ref.read(widget.cycleProvider.notifier);
-      final stages = cycleNotifier.stages;
+      final notifier = ref.read(widget.cycleProvider.notifier);
+      final stages = notifier.stages;
 
-      // Create and prepare an AudioPlayer for each stage
-      for (int i = 0; i < stages.length; i++) {
-        final stage = stages[i];
-        final explanationPath = _getExplanationPath(stage, i);
-
-        // Create new player for this stage
+      // Preload explanation audio for each stage
+      for (var i = 0; i < stages.length; i++) {
+        final path = _getExplanationPath(stages[i], i);
         final player = AudioPlayer();
-        await player.setAsset(explanationPath);
-        _explanationPlayers.add(player);
-
-        // Add listener for completion
+        await player.setAsset(path);
         player.playerStateStream.listen((state) {
           if (state.processingState == ProcessingState.completed && mounted) {
-            setState(() {
-              if (_currentExplanationIndex == i) {
+            if (_currentExplanationIndex == i) {
+              setState(() {
                 _isExplanationPlaying = false;
                 _currentExplanationIndex = null;
-              }
-            });
+              });
+            }
           }
         });
+        _explanationPlayers.add(player);
       }
 
-      // Just preload, don't auto-play
-      final currentIndex = ref.read(widget.cycleProvider);
-      _lastPlayedStageIndex = currentIndex;
-
-      // Don't auto-play anymore
-      // _playExplanationAudio(currentIndex);
+      _lastPlayedStageIndex = ref.read(widget.cycleProvider);
     } catch (e) {
-      debugPrint('Error preloading assets: $e');
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Error loading audio: $e';
-        });
-
-        // Auto-hide error after 3 seconds
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            setState(() {
-              _errorMessage = null;
-            });
-          }
-        });
-      }
+      debugPrint('Audio preload error: $e');
+      setState(() => _errorMessage = 'Error loading audio: $e');
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) setState(() => _errorMessage = null);
+      });
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  String _getExplanationPath(CycleStage stage, int index) {
-    // If explanationAudio is provided in the stage, use it
-    if (stage.explanationAudio != null) {
-      return stage.explanationAudio!;
-    }
-
-    // Fallback to default pattern if explanationAudio is not available
-    return 'assets/audio/${widget.cycleType}_cycle/stages/${widget.cycleType.toUpperCase()}EX-S${index + 1}-${stage.name.replaceAll(' ', '')}.mp3';
-  }
-
-  @override
-  void dispose() {
-    // Stop and dispose all audio players
-    _audioPlayer.dispose();
-    for (var player in _explanationPlayers) {
-      player.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(CycleView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.cycleProvider != widget.cycleProvider) {
-      _stopAllAudio();
-      _lastPlayedStageIndex = -1;
-    }
-  }
+  String _getExplanationPath(CycleStage s, int i) =>
+      s.explanationAudio ??
+      'assets/audio/${widget.cycleType}_cycle/stages/'
+      '${widget.cycleType.toUpperCase()}EX-S${i + 1}-'
+      '${s.name.replaceAll(' ', '')}.mp3';
 
   void _stopAllAudio() {
     _audioPlayer.stop();
-    for (var player in _explanationPlayers) {
-      player.stop();
-    }
+    for (var p in _explanationPlayers) p.stop();
     setState(() {
       _isExplanationPlaying = false;
       _currentExplanationIndex = null;
     });
   }
 
-  Future<void> _toggleExplanationAudio(int stageIndex) async {
-    if (stageIndex >= _explanationPlayers.length) return;
+  Future<void> _toggleExplanationAudio(int idx) async {
+    if (idx >= _explanationPlayers.length) return;
+    final player = _explanationPlayers[idx];
 
-    // If already playing this stage's explanation
-    if (_isExplanationPlaying && _currentExplanationIndex == stageIndex) {
-      // Pause it
-      _explanationPlayers[stageIndex].pause();
-      setState(() {
-        _isExplanationPlaying = false;
-      });
+    if (_isExplanationPlaying && _currentExplanationIndex == idx) {
+      await player.pause();
+      setState(() => _isExplanationPlaying = false);
       return;
     }
 
-    // Stop any currently playing explanation audio
     if (_isExplanationPlaying && _currentExplanationIndex != null) {
       _explanationPlayers[_currentExplanationIndex!].stop();
     }
 
     try {
-      // Start the new explanation audio
-      await _explanationPlayers[stageIndex].seek(Duration.zero);
-      await _explanationPlayers[stageIndex].play();
-
+      await player.seek(Duration.zero);
+      await player.play();
       setState(() {
         _isExplanationPlaying = true;
-        _currentExplanationIndex = stageIndex;
-        _lastPlayedStageIndex = stageIndex;
+        _currentExplanationIndex = idx;
       });
     } catch (e) {
-      debugPrint('Error playing explanation audio: $e');
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Error playing audio: $e';
-          _isExplanationPlaying = false;
-          _currentExplanationIndex = null;
-        });
-
-        // Auto-hide error after 3 seconds
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            setState(() {
-              _errorMessage = null;
-            });
-          }
-        });
-      }
+      debugPrint('Audio play error: $e');
+      setState(() => _errorMessage = 'Error playing audio');
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) setState(() => _errorMessage = null);
+      });
     }
   }
 
-  Future<void> _playAudio(String audioAsset, String language) async {
+  Future<void> _playAudio(String asset, String lang) async {
+    if (_isExplanationPlaying && _currentExplanationIndex != null) {
+      _explanationPlayers[_currentExplanationIndex!].pause();
+    }
     try {
-      // Pause explanation audio if it's playing
-      if (_isExplanationPlaying && _currentExplanationIndex != null) {
-        _explanationPlayers[_currentExplanationIndex!].pause();
-      }
-
-      await _audioPlayer.setAsset(audioAsset);
+      await _audioPlayer.setAsset(asset);
       await _audioPlayer.play();
-
-      // Resume explanation audio after pronunciation is done
       _audioPlayer.playerStateStream.listen((state) {
         if (state.processingState == ProcessingState.completed &&
             _isExplanationPlaying &&
@@ -220,437 +150,305 @@ class _CycleViewState extends ConsumerState<CycleView> {
         }
       });
     } catch (e) {
-      debugPrint('Error playing audio: $e');
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Error playing audio: $e';
-        });
-
-        // Auto-hide error after 3 seconds
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            setState(() {
-              _errorMessage = null;
-            });
-          }
-        });
-      }
+      debugPrint('Pronunciation error: $e');
+      setState(() => _errorMessage = 'Error playing pronunciation');
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) setState(() => _errorMessage = null);
+      });
     }
   }
 
-  Widget _buildImage(String imageAsset, String? riveAsset) {
-    return Center(
-      child: Stack(
-        alignment: Alignment.center,
-        fit: StackFit.expand,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 32.0,
-              vertical: 16.0,
-            ),
-            child:
-                riveAsset != null
-                    ? rive.RiveAnimation.asset(
-                      riveAsset,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.center,
-                    )
-                    : Image.asset(
-                      imageAsset,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.center,
-                      errorBuilder: (context, error, stackTrace) {
-                        debugPrint('Error loading image: $error');
-                        return Container(
-                          color: widget.imageBackgroundColor.withOpacity(0.15),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.image_not_supported,
-                                  size: 48,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Image not available',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-          ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    for (var p in _explanationPlayers) p.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentStageIndex = ref.watch(widget.cycleProvider);
-    final cycleNotifier = ref.read(widget.cycleProvider.notifier);
-    final stages = cycleNotifier.stages;
+    final currentIndex = ref.watch(widget.cycleProvider);
+    final notifier = ref.read(widget.cycleProvider.notifier);
+    final stages = notifier.stages;
 
-    // Check if stage has changed - stop audio if it was playing
-    if (currentStageIndex != _lastPlayedStageIndex && !_isLoading) {
+    // On stage change, stop any playing audio
+    if (currentIndex != _lastPlayedStageIndex && !_isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _stopAllAudio();
-
-        // Don't auto-play, just update the index
-        _lastPlayedStageIndex = currentStageIndex;
+        _lastPlayedStageIndex = currentIndex;
       });
     }
 
-    // Boundary check
-    if (currentStageIndex >= stages.length) {
-      ref.read(widget.cycleProvider.notifier).reset();
+    // If we’ve run out of stages, reset and exit
+    if (currentIndex >= stages.length) {
+      notifier.reset();
       context.go('/');
       return const SizedBox.shrink();
     }
 
-    final currentStage = stages[currentStageIndex];
-    final progress = (currentStageIndex + 1) / stages.length;
+    final stage = stages[currentIndex];
+    final progress = (currentIndex + 1) / stages.length;
 
-    void _handleClose() {
+    void close() {
       _stopAllAudio();
-      ref.read(widget.cycleProvider.notifier).reset();
-      if (context.mounted) {
-        context.pop();
-      }
+      notifier.reset();
+      if (context.mounted) context.pop();
     }
 
-    void _handleComplete() {
-      _stopAllAudio();
-      ref.read(widget.cycleProvider.notifier).reset();
-      if (context.mounted) {
-        context.pop();
-      }
-    }
-
-    return PopScope(
-      // Make sure audio stops when using system back button
-      onPopInvoked: (didPop) {
-        if (didPop) {
-          _stopAllAudio();
-        }
-      },
-      child: Scaffold(
-        backgroundColor: widget.backgroundColor,
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // Top bar with close button and progress bar
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.black87),
-                          onPressed: _handleClose,
-                        ),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              backgroundColor: Colors.grey.withOpacity(0.2),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                widget.progressBarColor,
-                              ),
-                              minHeight: 8,
-                            ),
+    return Scaffold(
+      backgroundColor: widget.backgroundColor,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                // Top bar with close & progress
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: close,
+                      ),
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.grey.withOpacity(0.2),
+                            valueColor:
+                                AlwaysStoppedAnimation(widget.progressBarColor),
+                            minHeight: 8,
                           ),
                         ),
-                        const SizedBox(width: 48),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
+                  ),
+                ),
+
+                // Main content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        // Static image + explanation button
+                        Stack(
+                          children: [
+                            Container(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.45,
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              decoration: BoxDecoration(
+                                color: widget.imageBackgroundColor
+                                    .withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  color: widget.imageBackgroundColor
+                                      .withOpacity(0.15),
+                                  child: Center(
+                                    child: Image.asset(
+                                      stage.imageAsset,
+                                      fit: BoxFit.contain,
+                                      alignment: Alignment.center,
+                                      errorBuilder: (_, __, ___) =>
+                                          const Icon(
+                                        Icons.image_not_supported,
+                                        size: 48,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              bottom: 10,
+                              child: CustomButton(
+                                height: 40,
+                                width: 140,
+                                cornerRadius: 20,
+                                buttonColor: widget.buttonColor,
+                                onPressed: () =>
+                                    _toggleExplanationAudio(currentIndex),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      _isExplanationPlaying &&
+                                              _currentExplanationIndex ==
+                                                  currentIndex
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Text('Explanation'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        // English & Spanish text + pronunciation
+                        Column(
+                          children: [
+                            const Text(
+                              'English',
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.black54),
+                            ),
+                            const SizedBox(height: 4),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  stage.name,
+                                  style: const TextStyle(
+                                      fontSize: 32,
+                                      fontFamily: 'PoetsenOne'),
+                                ),
+                                Positioned(
+                                  right: 50,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.volume_up),
+                                    onPressed: () {
+                                      final asset =
+                                          stage.audioAssets?['en'];
+                                      if (asset != null)
+                                        _playAudio(asset, 'en');
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Spanish',
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.black54),
+                            ),
+                            const SizedBox(height: 4),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  stage.translations['es'] ?? '',
+                                  style: const TextStyle(
+                                      fontSize: 32,
+                                      fontFamily: 'PoetsenOne'),
+                                ),
+                                Positioned(
+                                  right: 50,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.volume_up),
+                                    onPressed: () {
+                                      final asset =
+                                          stage.audioAssets?['es'];
+                                      if (asset != null)
+                                        _playAudio(asset, 'es');
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const Spacer(),
+
+                        // Navigation buttons
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if (currentIndex > 0)
+                                CustomButton(
+                                  height: 56,
+                                  width: 56,
+                                  cornerRadius: 12,
+                                  buttonColor: widget.buttonColor,
+                                  icon: Icons.arrow_back_ios_new,
+                                  onPressed: () {
+                                    _stopAllAudio();
+                                    notifier.previousStage();
+                                  },
+                                )
+                              else
+                                const SizedBox(width: 56),
+                              if (currentIndex < stages.length - 1)
+                                CustomButton(
+                                  height: 56,
+                                  width: 56,
+                                  cornerRadius: 12,
+                                  buttonColor: widget.buttonColor,
+                                  icon: Icons.arrow_forward_ios,
+                                  onPressed: () {
+                                    _stopAllAudio();
+                                    notifier.nextStage();
+                                  },
+                                )
+                              else
+                                CustomButton(
+                                  height: 56,
+                                  width: 120,
+                                  cornerRadius: 12,
+                                  buttonColor: widget.buttonColor,
+                                  text: 'Complete',
+                                  onPressed: close,
+                                ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
+                ),
+              ],
+            ),
 
-                  // Main content
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Column(
-                        children: [
-                          // Stage image with play/pause audio button
-                          Stack(
-                            children: [
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.45,
-                                width: MediaQuery.of(context).size.width * 0.85,
-                                decoration: BoxDecoration(
-                                  color: widget.imageBackgroundColor
-                                      .withOpacity(0.3),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    color: widget.imageBackgroundColor
-                                        .withOpacity(0.15),
-                                    child: Center(
-                                      child: SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                            0.75,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                            0.4,
-                                        child: _buildImage(
-                                          currentStage.imageAsset,
-                                          currentStage.riveAsset,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Play/Pause Explanation button
-                              Positioned(
-                                right: 10,
-                                bottom: 10,
-                                child: CustomButton(
-                                  height: 40,
-                                  width: 140,
-                                  cornerRadius: 20,
-                                  buttonColor: widget.buttonColor,
-                                  onPressed:
-                                      () => _toggleExplanationAudio(
-                                        currentStageIndex,
-                                      ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        _isExplanationPlaying &&
-                                                _currentExplanationIndex ==
-                                                    currentStageIndex
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      const Text(
-                                        'Explanation',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'PoetsenOne',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          // Language sections
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // English section
-                              const Center(
-                                child: Text(
-                                  'English',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  // Centered text
-                                  Center(
-                                    child: Text(
-                                      currentStage.name,
-                                      style: const TextStyle(
-                                        fontSize: 32,
-                                        fontFamily: 'PoetsenOne',
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  // Icon positioned to the right
-                                  Positioned(
-                                    right: 50,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.volume_up,
-                                        color: Colors.black87,
-                                      ),
-                                      onPressed: () {
-                                        if (currentStage.audioAssets != null &&
-                                            currentStage.audioAssets!
-                                                .containsKey('en')) {
-                                          _playAudio(
-                                            currentStage.audioAssets!['en']!,
-                                            'en',
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // Spanish section
-                              const Center(
-                                child: Text(
-                                  'Spanish',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  // Centered text
-                                  Center(
-                                    child: Text(
-                                      currentStage.translations['es'] ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 32,
-                                        fontFamily: 'PoetsenOne',
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  // Icon positioned to the right
-                                  Positioned(
-                                    right: 50,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.volume_up,
-                                        color: Colors.black87,
-                                      ),
-                                      onPressed: () {
-                                        if (currentStage.audioAssets != null &&
-                                            currentStage.audioAssets!
-                                                .containsKey('es')) {
-                                          _playAudio(
-                                            currentStage.audioAssets!['es']!,
-                                            'es',
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          // Navigation buttons at the bottom
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Previous button
-                                if (currentStageIndex > 0)
-                                  CustomButton(
-                                    height: 56,
-                                    width: 56,
-                                    cornerRadius: 12,
-                                    buttonColor: widget.buttonColor,
-                                    icon: Icons.arrow_back_ios_new,
-                                    onPressed: () {
-                                      _stopAllAudio();
-                                      cycleNotifier.previousStage();
-                                    },
-                                  )
-                                else
-                                  const SizedBox(width: 56),
-
-                                // Next button or Complete button
-                                if (currentStageIndex < stages.length - 1)
-                                  CustomButton(
-                                    height: 56,
-                                    width: 56,
-                                    cornerRadius: 12,
-                                    buttonColor: widget.buttonColor,
-                                    icon: Icons.arrow_forward_ios,
-                                    onPressed: () {
-                                      _stopAllAudio();
-                                      cycleNotifier.nextStage();
-                                    },
-                                  )
-                                else
-                                  CustomButton(
-                                    height: 56,
-                                    width: 120,
-                                    cornerRadius: 12,
-                                    buttonColor: widget.buttonColor,
-                                    text: 'Complete',
-                                    onPressed: _handleComplete,
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+            // Error overlay
+            if (_errorMessage != null)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  color: Colors.red,
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: Colors.white),
                   ),
-                ],
+                ),
               ),
 
-              // Error message at the bottom
-              if (_errorMessage != null)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    color: Colors.red,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: Text(
-                      _errorMessage!,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                  ),
-                ),
-
-              // Initial loading indicator
-              if (_isLoading)
-                Container(
-                  color: widget.backgroundColor,
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-            ],
-          ),
+            // Loading overlay
+            if (_isLoading)
+              Container(
+                color: widget.backgroundColor,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+          ],
         ),
       ),
     );
