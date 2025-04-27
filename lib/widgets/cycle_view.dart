@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
 import '../providers/cycle_provider.dart';
+import 'package:rive/rive.dart' as rive;
 import './custom_button.dart';
 import 'dart:async';
 
@@ -237,7 +238,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
     }
   }
 
-  Widget _buildImage(String imageAsset) {
+  Widget _buildImage(String imageAsset, String? riveAsset) {
     return Center(
       child: Stack(
         alignment: Alignment.center,
@@ -248,37 +249,44 @@ class _CycleViewState extends ConsumerState<CycleView> {
               horizontal: 32.0,
               vertical: 16.0,
             ),
-            child: Image.asset(
-              imageAsset,
-              fit: BoxFit.contain,
-              alignment: Alignment.center,
-              errorBuilder: (context, error, stackTrace) {
-                debugPrint('Error loading image: $error');
-                return Container(
-                  color: widget.imageBackgroundColor.withOpacity(0.15),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.image_not_supported,
-                          size: 48,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Image not available',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16,
+            child:
+                riveAsset != null
+                    ? rive.RiveAnimation.asset(
+                      riveAsset,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                    )
+                    : Image.asset(
+                      imageAsset,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                      errorBuilder: (context, error, stackTrace) {
+                        debugPrint('Error loading image: $error');
+                        return Container(
+                          color: widget.imageBackgroundColor.withOpacity(0.15),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image_not_supported,
+                                  size: 48,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Image not available',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -408,6 +416,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
                                             0.4,
                                         child: _buildImage(
                                           currentStage.imageAsset,
+                                          currentStage.riveAsset,
                                         ),
                                       ),
                                     ),

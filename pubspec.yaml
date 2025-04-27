@@ -38,6 +38,7 @@ dependencies:
   riverpod_annotation: ^2.6.1
   go_router: ^14.8.0
   just_audio: ^0.9.46
+  rive: ^0.13.7
 
 dev_dependencies:
   flutter_test:
@@ -62,8 +63,9 @@ flutter:
   uses-material-design: true
   
   assets:
-    - assets/fonts/  # Ensure fonts are placed in this folder
-    - assets/images/  # Ensure images are placed in this folder
+    - assets/fonts/ 
+    - assets/images/  
+    - assets/animations/ 
     - assets/images/plant_cycle/
     - assets/images/water_cycle/
     - assets/images/rock_cycle/
