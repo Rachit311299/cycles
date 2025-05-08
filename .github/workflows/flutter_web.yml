@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'
+          flutter-version: '3.7.0'
           channel: 'stable'
       - run: flutter build web --release --web-renderer html --base-href $BASE_HREF
       - name: Deploy gh-pages
