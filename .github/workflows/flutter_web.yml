@@ -29,7 +29,7 @@ jobs:
       - run: flutter pub get
       
       # Build web
-      - run: flutter build web --release --web-renderer html --base-href $BASE_HREF
+      - run: flutter build web --release --base-href $BASE_HREF
       
       # Deploy to GitHub Pages
       - name: Deploy gh-pages
