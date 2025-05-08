@@ -35,6 +35,10 @@ final rockCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
   return CycleNotifier(stages: rockCycleStages);
 });
 
+final seasonCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
+  return CycleNotifier(stages: seasonCycleStages);
+});
+
 // Define stages for each cycle
 final List<CycleStage> plantCycleStages = [
   CycleStage(
@@ -51,7 +55,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Semilias.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S1-Seeds.mp3',
-    animationAsset: 'assets/animations/plantCycle_Stage 1.gif',
+    animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 1.gif',
   ),
   CycleStage(
     name: 'Germination',
@@ -67,7 +71,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Germinacion.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S2-Germination.mp3',
-    animationAsset: 'assets/animations/plantCycle_Stage 2.gif',
+    animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 2.gif',
   ),
   CycleStage(
     name: 'Seedling',
@@ -83,7 +87,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-plantula.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S3-Seedling.mp3',
-    animationAsset: 'assets/animations/plantCycle_Stage 3.gif',
+    animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 3.gif',
   ),
   CycleStage(
     name: 'Adult Plant',
@@ -99,7 +103,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-planatadulta.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3',
-    animationAsset: 'assets/animations/plantCycle_Stage 4.gif',
+    animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 4.gif',
 
     
   ),
@@ -117,7 +121,7 @@ final List<CycleStage> plantCycleStages = [
       'es': 'aasets/audio/plant_cycle/es/Pro-Floracion.mp3',
     },
     explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S5-Flowering.mp3',
-    animationAsset: 'assets/animations/plantCycle_Stage 5.gif',
+    animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 5.gif',
   ),
 ];
 
@@ -211,16 +215,6 @@ final List<CycleStage> rockCycleStages = [
     },
   ),
   CycleStage(
-    name: 'Weathering',
-    description: 'Rocks break down into smaller pieces due to weather and erosion.',
-    imageAsset: 'assets/images/rock_cycle/weathering.png',
-    translations: {
-      'es': 'Meteorización',
-      'fr': 'Altération',
-      'hi': 'अपक्षय',
-    },
-  ),
-  CycleStage(
     name: 'Sediments',
     description: 'Small pieces of rock collect and form layers.',
     imageAsset: 'assets/images/rock_cycle/sediments.png',
@@ -249,5 +243,72 @@ final List<CycleStage> rockCycleStages = [
       'fr': 'Roches Métamorphiques',
       'hi': 'कायांतरित चट्टानें',
     },
+  ),
+];
+
+final List<CycleStage> seasonCycleStages = [
+  CycleStage(
+    name: 'Spring',
+    description: 'Spring brings new life as plants begin to grow and animals come out of hibernation.',
+    imageAsset: 'assets/images/season_cycle/spring.png',
+    translations: {
+      'es': 'Primavera',
+      'fr': 'Printemps',
+      'hi': 'वसंत',
+    },
+    audioAssets: {
+      'en': 'assets/audio/season_cycle/en/Pro-Spring.mp3',
+      'es': 'assets/audio/season_cycle/es/Pro-Primavera.mp3',
+    },
+    explanationAudio: 'assets/audio/season_cycle/stages/SCEX-S1-Spring.mp3',
+    animationAsset: 'assets/animations/season_cycle/SeasonCycle_Stage 1.gif',
+  ),
+  CycleStage(
+    name: 'Summer',
+    description: 'Summer is the hottest season with long days and plenty of sunshine.',
+    imageAsset: 'assets/images/season_cycle/summer.png',
+    translations: {
+      'es': 'Verano',
+      'fr': 'Été',
+      'hi': 'ग्रीष्म',
+    },
+    audioAssets: {
+      'en': 'assets/audio/season_cycle/en/Pro-Summer.mp3',
+      'es': 'assets/audio/season_cycle/es/Pro-Verano.mp3',
+    },
+    explanationAudio: 'assets/audio/season_cycle/stages/SCEX-S2-Summer.mp3',
+    animationAsset: 'assets/animations/season_cycle/SeasonCycle_Stage 2.gif',
+  ),
+  CycleStage(
+    name: 'Autumn',
+    description: 'Autumn brings falling leaves and cooler temperatures as nature prepares for winter.',
+    imageAsset: 'assets/images/season_cycle/autumn.png',
+    translations: {
+      'es': 'Otoño',
+      'fr': 'Automne',
+      'hi': 'शरद',
+    },
+    audioAssets: {
+      'en': 'assets/audio/season_cycle/en/Pro-Autumn.mp3',
+      'es': 'assets/audio/season_cycle/es/Pro-Otono.mp3',
+    },
+    explanationAudio: 'assets/audio/season_cycle/stages/SCEX-S3-Autumn.mp3',
+    animationAsset: 'assets/animations/season_cycle/SeasonCycle_Stage 3.gif',
+  ),
+  CycleStage(
+    name: 'Winter',
+    description: 'Winter is the coldest season with short days and often snow and ice.',
+    imageAsset: 'assets/images/season_cycle/winter.png',
+    translations: {
+      'es': 'Invierno',
+      'fr': 'Hiver',
+      'hi': 'शीत',
+    },
+    audioAssets: {
+      'en': 'assets/audio/season_cycle/en/Pro-Winter.mp3',
+      'es': 'assets/audio/season_cycle/es/Pro-Invierno.mp3',
+    },
+    explanationAudio: 'assets/audio/season_cycle/stages/SCEX-S4-Winter.mp3',
+    animationAsset: 'assets/animations/season_cycle/SeasonCycle_Stage 4.gif',
   ),
 ]; 

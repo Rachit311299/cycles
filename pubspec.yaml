@@ -65,10 +65,12 @@ flutter:
   assets:
     - assets/fonts/ 
     - assets/images/  
-    - assets/animations/ 
+    - assets/animations/
+    - assets/animations/plant_cycle/
     - assets/images/plant_cycle/
     - assets/images/water_cycle/
     - assets/images/rock_cycle/
+    - assets/images/season_cycle/
     - assets/audio/
     - assets/audio/plant_cycle/
     - assets/audio/plant_cycle/en/

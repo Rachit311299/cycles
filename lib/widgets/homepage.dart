@@ -209,6 +209,12 @@ class HomePage extends StatelessWidget {
                       textColor: const Color(0xFFF7DB6A),
                       onTap: () => context.push('/rock-cycle'),
                     ),
+                    CycleCard(
+                      title: 'Season Cycle',
+                      backgroundImage: 'assets/images/season_cycle.jpg',
+                      textColor: const Color(0xFFFFEBF0),
+                      onTap: () => context.push('/season-cycle'),
+                    ),
                   ],
                 ),
               ),
