@@ -5,7 +5,7 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   // Initialize with system or light/dark as you prefer.
   @override
   ThemeMode build() {
-    return ThemeMode.system;
+    return ThemeMode.light;
   }
 
   void toggleTheme(bool isDarkMode) {

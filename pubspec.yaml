@@ -67,6 +67,7 @@ flutter:
     - assets/images/  
     - assets/animations/
     - assets/animations/plant_cycle/
+    - assets/animations/season_cycle/
     - assets/images/plant_cycle/
     - assets/images/water_cycle/
     - assets/images/rock_cycle/

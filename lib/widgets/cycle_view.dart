@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
 import '../providers/cycle_provider.dart';
+import '../services/asset_preloader_service.dart';
 import './custom_button.dart';
 import 'dart:async';
 
@@ -33,41 +34,24 @@ class CycleView extends ConsumerStatefulWidget {
 
 class _CycleViewState extends ConsumerState<CycleView> {
   final AudioPlayer _audioPlayer = AudioPlayer(); // For pronunciation
-  final List<AudioPlayer> _explanationPlayers =
-      []; // List of players for each stage
+  List<AudioPlayer>? _explanationPlayers;
   int _lastPlayedStageIndex = -1;
   String? _errorMessage;
-  bool _isLoading = true;
   bool _isExplanationPlaying = false;
   int? _currentExplanationIndex;
 
   @override
   void initState() {
     super.initState();
-    _preloadAssets();
+    _initializeAudioPlayers();
   }
 
-  Future<void> _preloadAssets() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final cycleNotifier = ref.read(widget.cycleProvider.notifier);
-      final stages = cycleNotifier.stages;
-
-      // Create and prepare an AudioPlayer for each stage
-      for (int i = 0; i < stages.length; i++) {
-        final stage = stages[i];
-        final explanationPath = _getExplanationPath(stage, i);
-
-        // Create new player for this stage
-        final player = AudioPlayer();
-        await player.setAsset(explanationPath);
-        _explanationPlayers.add(player);
-
-        // Add listener for completion
-        player.playerStateStream.listen((state) {
+  void _initializeAudioPlayers() {
+    _explanationPlayers = AssetPreloaderService().getPreloadedPlayers(widget.cycleType);
+    
+    if (_explanationPlayers != null) {
+      for (int i = 0; i < _explanationPlayers!.length; i++) {
+        _explanationPlayers![i].playerStateStream.listen((state) {
           if (state.processingState == ProcessingState.completed && mounted) {
             setState(() {
               if (_currentExplanationIndex == i) {
@@ -78,55 +62,12 @@ class _CycleViewState extends ConsumerState<CycleView> {
           }
         });
       }
-
-      // Just preload, don't auto-play
-      final currentIndex = ref.read(widget.cycleProvider);
-      _lastPlayedStageIndex = currentIndex;
-
-      // Don't auto-play anymore
-      // _playExplanationAudio(currentIndex);
-    } catch (e) {
-      debugPrint('Error preloading assets: $e');
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Error loading audio: $e';
-        });
-
-        // Auto-hide error after 3 seconds
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            setState(() {
-              _errorMessage = null;
-            });
-          }
-        });
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
     }
-  }
-
-  String _getExplanationPath(CycleStage stage, int index) {
-    // If explanationAudio is provided in the stage, use it
-    if (stage.explanationAudio != null) {
-      return stage.explanationAudio!;
-    }
-
-    // Fallback to default pattern if explanationAudio is not available
-    return 'assets/audio/${widget.cycleType}_cycle/stages/${widget.cycleType.toUpperCase()}EX-S${index + 1}-${stage.name.replaceAll(' ', '')}.mp3';
   }
 
   @override
   void dispose() {
-    // Stop and dispose all audio players
     _audioPlayer.dispose();
-    for (var player in _explanationPlayers) {
-      player.dispose();
-    }
     super.dispose();
   }
 
@@ -142,8 +83,10 @@ class _CycleViewState extends ConsumerState<CycleView> {
 
   void _stopAllAudio() {
     _audioPlayer.stop();
-    for (var player in _explanationPlayers) {
-      player.stop();
+    if (_explanationPlayers != null) {
+      for (var player in _explanationPlayers!) {
+        player.stop();
+      }
     }
     setState(() {
       _isExplanationPlaying = false;
@@ -152,12 +95,12 @@ class _CycleViewState extends ConsumerState<CycleView> {
   }
 
   Future<void> _toggleExplanationAudio(int stageIndex) async {
-    if (stageIndex >= _explanationPlayers.length) return;
+    if (_explanationPlayers == null || stageIndex >= _explanationPlayers!.length) return;
 
     // If already playing this stage's explanation
     if (_isExplanationPlaying && _currentExplanationIndex == stageIndex) {
       // Pause it
-      _explanationPlayers[stageIndex].pause();
+      _explanationPlayers![stageIndex].pause();
       setState(() {
         _isExplanationPlaying = false;
       });
@@ -166,13 +109,13 @@ class _CycleViewState extends ConsumerState<CycleView> {
 
     // Stop any currently playing explanation audio
     if (_isExplanationPlaying && _currentExplanationIndex != null) {
-      _explanationPlayers[_currentExplanationIndex!].stop();
+      _explanationPlayers![_currentExplanationIndex!].stop();
     }
 
     try {
       // Start the new explanation audio
-      await _explanationPlayers[stageIndex].seek(Duration.zero);
-      await _explanationPlayers[stageIndex].play();
+      await _explanationPlayers![stageIndex].seek(Duration.zero);
+      await _explanationPlayers![stageIndex].play();
 
       setState(() {
         _isExplanationPlaying = true;
@@ -187,15 +130,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
           _isExplanationPlaying = false;
           _currentExplanationIndex = null;
         });
-
-        // Auto-hide error after 3 seconds
-        Future.delayed(const Duration(seconds: 3), () {
-          if (mounted) {
-            setState(() {
-              _errorMessage = null;
-            });
-          }
-        });
       }
     }
   }
@@ -204,7 +138,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
     try {
       // Pause explanation audio if it's playing
       if (_isExplanationPlaying && _currentExplanationIndex != null) {
-        _explanationPlayers[_currentExplanationIndex!].pause();
+        _explanationPlayers![_currentExplanationIndex!].pause();
       }
 
       await _audioPlayer.setAsset(audioAsset);
@@ -215,7 +149,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
         if (state.processingState == ProcessingState.completed &&
             _isExplanationPlaying &&
             _currentExplanationIndex != null) {
-          _explanationPlayers[_currentExplanationIndex!].play();
+          _explanationPlayers![_currentExplanationIndex!].play();
         }
       });
     } catch (e) {
@@ -333,7 +267,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
     final stages = cycleNotifier.stages;
 
     // Check if stage has changed - stop audio if it was playing
-    if (currentStageIndex != _lastPlayedStageIndex && !_isLoading) {
+    if (currentStageIndex != _lastPlayedStageIndex) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _stopAllAudio();
 
@@ -394,13 +328,23 @@ class _CycleViewState extends ConsumerState<CycleView> {
                         Expanded(
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              backgroundColor: Colors.grey.withOpacity(0.2),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                widget.progressBarColor,
+                            child: TweenAnimationBuilder<double>(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              tween: Tween<double>(
+                                begin: 0,
+                                end: progress,
                               ),
-                              minHeight: 8,
+                              builder: (context, value, child) {
+                                return LinearProgressIndicator(
+                                  value: value,
+                                  backgroundColor: Colors.grey.withOpacity(0.2),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    widget.progressBarColor,
+                                  ),
+                                  minHeight: 8,
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -673,13 +617,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
                       style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
-                ),
-
-              // Initial loading indicator
-              if (_isLoading)
-                Container(
-                  color: widget.backgroundColor,
-                  child: const Center(child: CircularProgressIndicator()),
                 ),
             ],
           ),

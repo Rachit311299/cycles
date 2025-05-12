@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/cycle_provider.dart';
+import '../services/asset_preloader_service.dart';
 import './custom_button.dart';
 
-class CycleMenuView extends StatelessWidget {
+class CycleMenuView extends ConsumerStatefulWidget {
   final String title;
   final Color backgroundColor;
   final Color buttonColor;
@@ -17,9 +20,49 @@ class CycleMenuView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  ConsumerState<CycleMenuView> createState() => _CycleMenuViewState();
+}
+
+class _CycleMenuViewState extends ConsumerState<CycleMenuView> {
+  @override
+  void initState() {
+    super.initState();
+    _triggerPreloading();
+  }
+
+  void _triggerPreloading() {
+    final cycleProvider = _getCycleProvider();
+    if (cycleProvider != null) {
+      final stages = ref.read(cycleProvider.notifier).stages;
+      AssetPreloaderService().preloadCycleAssets(stages, widget.cycleType);
+    }
+  }
+
+  StateNotifierProvider<CycleNotifier, int>? _getCycleProvider() {
+    switch (widget.cycleType) {
+      case 'plant':
+        return plantCycleProvider;
+      case 'water':
+        return waterCycleProvider;
+      case 'rock':
+        return rockCycleProvider;
+      case 'season':
+        return seasonCycleProvider;
+      default:
+        return null;
+    }
+  }
+
+  @override
+  void dispose() {
+    AssetPreloaderService().disposeCycleAssets(widget.cycleType);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: widget.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -34,7 +77,7 @@ class CycleMenuView extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      title,
+                      widget.title,
                       style: const TextStyle(
                         fontSize: 24,
                         fontFamily: 'PoetsenOne',
@@ -59,7 +102,7 @@ class CycleMenuView extends StatelessWidget {
                       icon: Icons.school,
                       label: 'Learn',
                       description: 'Explore the stages and process',
-                      onTap: () => context.push('/$cycleType-cycle/learn'),
+                      onTap: () => context.push('/${widget.cycleType}-cycle/learn'),
                     ),
                     const SizedBox(height: 20),
                     _buildMenuButton(
@@ -67,7 +110,7 @@ class CycleMenuView extends StatelessWidget {
                       icon: Icons.games,
                       label: 'Games',
                       description: 'Fun interactive activities',
-                      onTap: () => context.push('/$cycleType-cycle/games'),
+                      onTap: () => context.push('/${widget.cycleType}-cycle/games'),
                     ),
                     const SizedBox(height: 20),
                     _buildMenuButton(
@@ -75,7 +118,7 @@ class CycleMenuView extends StatelessWidget {
                       icon: Icons.quiz,
                       label: 'Trivia',
                       description: 'Test your knowledge',
-                      onTap: () => context.push('/$cycleType-cycle/trivia'),
+                      onTap: () => context.push('/${widget.cycleType}-cycle/trivia'),
                     ),
                   ],
                 ),
@@ -102,7 +145,7 @@ class CycleMenuView extends StatelessWidget {
         height: 100,
         width: double.infinity,
         cornerRadius: 16,
-        buttonColor: buttonColor,
+        buttonColor: widget.buttonColor,
         onPressed: onTap,
         child: Row(
           children: [
