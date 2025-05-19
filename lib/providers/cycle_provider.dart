@@ -320,7 +320,7 @@ final List<CycleStage> butterflyCycleStages = [
   CycleStage(
     name: 'Egg',
     description: 'The butterfly life cycle begins as a tiny egg, often laid on a leaf.',
-    imageAsset: 'assets/images/butterfly_cycle/egg.png',
+    imageAsset: 'assets/images/butterfly_cycle/eggs.png',
     translations: {
       'es': 'Huevo',
       'fr': 'Œuf',
@@ -368,7 +368,7 @@ final List<CycleStage> butterflyCycleStages = [
   CycleStage(
     name: 'Adult Butterfly',
     description: 'The adult butterfly emerges from the chrysalis, ready to start the cycle again.',
-    imageAsset: 'assets/images/butterfly_cycle/adult_butterfly.png',
+    imageAsset: 'assets/images/butterfly_cycle/butterfly.png',
     translations: {
       'es': 'Mariposa Adulta',
       'fr': 'Papillon Adulte',
