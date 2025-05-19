@@ -225,4 +225,59 @@ final seasonCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
       explanation: 'Winter has the shortest days and longest nights.',
     ),
   ];
+});
+
+final butterflyCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
+  return [
+    TriviaQuestion(
+      question: 'What is the first stage of a butterfly\'s life cycle?',
+      options: ['Egg', 'Caterpillar', 'Pupa', 'Adult Butterfly'],
+      correctAnswerIndex: 0,
+      explanation: 'The butterfly life cycle begins as a tiny egg, usually laid on a leaf.',
+    ),
+    TriviaQuestion(
+      question: 'What does a caterpillar do most of the time?',
+      options: [
+        'Sleep',
+        'Eat leaves and grow',
+        'Fly',
+        'Lay eggs'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Caterpillars (larvae) spend most of their time eating and growing rapidly.',
+    ),
+    TriviaQuestion(
+      question: 'What is the stage called when a caterpillar transforms inside a hard case?',
+      options: [
+        'Egg',
+        'Pupa',
+        'Adult Butterfly',
+        'Larva'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'The pupa (chrysalis) is the stage where the caterpillar transforms into a butterfly.',
+    ),
+    TriviaQuestion(
+      question: 'What happens after the butterfly emerges from the pupa?',
+      options: [
+        'It lays eggs immediately',
+        'It dries its wings and then flies away',
+        'It eats leaves',
+        'It returns to the pupa'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'After emerging, the butterfly dries its wings before flying away to continue the cycle.',
+    ),
+    TriviaQuestion(
+      question: 'What is the main purpose of the adult butterfly stage?',
+      options: [
+        'To eat leaves',
+        'To grow bigger',
+        'To reproduce and lay eggs',
+        'To form a pupa'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'The adult butterfly\'s main purpose is to reproduce and lay eggs, starting the cycle again.',
+    ),
+  ];
 }); 

@@ -341,6 +341,80 @@ final appRouter = GoRouter(
             },
           ),
     ),
+    // Butterfly Cycle Routes
+    GoRoute(
+      path: '/butterfly-cycle',
+      builder: (context, state) => const CycleMenuView(
+        title: 'Butterfly Cycle',
+        backgroundColor: Color(0xFFFFECB3),
+        buttonColor: Color(0xFFFFA726),
+        cycleType: 'butterfly',
+      ),
+    ),
+    GoRoute(
+      path: '/butterfly-cycle/learn',
+      builder: (context, state) => CycleView(
+        title: 'Butterfly Cycle',
+        backgroundColor: const Color(0xFFFFECB3),
+        progressBarColor: const Color(0xFFFFA726),
+        imageBackgroundColor: const Color(0xFFFFA726),
+        buttonColor: const Color(0xFFFFA726),
+        cycleType: 'butterfly',
+        cycleProvider: butterflyCycleProvider,
+      ),
+    ),
+    GoRoute(
+      path: '/butterfly-cycle/games',
+      builder: (context, state) => CycleGamesMenu(
+        cycleTitle: 'Butterfly Cycle',
+        backgroundColor: const Color(0xFFFFECB3),
+        buttonColor: const Color(0xFFFFA726),
+        games: [
+          GameOption(
+            title: 'Cycle Builder',
+            description: 'Arrange the stages in correct order',
+            icon: Icons.sort,
+            route: '/butterfly-cycle/games/builder',
+          ),
+        ],
+      ),
+    ),
+    GoRoute(
+      path: '/butterfly-cycle/trivia',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final questions = ref.watch(butterflyCycleTriviaProvider);
+          return CycleTriviaGame(
+            title: 'Butterfly Cycle Trivia',
+            backgroundColor: const Color(0xFFFFECB3),
+            buttonColor: const Color(0xFFFFA726),
+            questions: questions,
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: '/butterfly-cycle/games/builder',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final cycleNotifier = ref.read(butterflyCycleProvider.notifier);
+          return CycleBuilderGame(
+            title: 'Butterfly Cycle Builder',
+            backgroundColor: const Color(0xFFFFECB3),
+            buttonColor: const Color(0xFFFFA726),
+            stages: cycleNotifier.stages
+                .map(
+                  (stage) => CycleStageItem(
+                    name: stage.name,
+                    imageAsset: stage.imageAsset,
+                    correctOrder: cycleNotifier.stages.indexOf(stage),
+                  ),
+                )
+                .toList(),
+          );
+        },
+      ),
+    ),
   ],
   redirect: (context, state) => null,
   errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Page not found!')))

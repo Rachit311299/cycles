@@ -215,6 +215,13 @@ class HomePage extends StatelessWidget {
                       textColor: const Color(0xFFFFEBF0),
                       onTap: () => context.push('/season-cycle'),
                     ),
+                    CycleCard(
+                      title: 'Butterfly Cycle',
+                      backgroundImage: 'assets/images/butterfly_cycle.jpg',
+                      textColor: const Color.fromARGB(255, 255, 225, 181),
+                      onTap: () => context.push('/butterfly-cycle'),
+                    ),
+                    
                   ],
                 ),
               ),

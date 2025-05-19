@@ -39,6 +39,10 @@ final seasonCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
   return CycleNotifier(stages: seasonCycleStages);
 });
 
+final butterflyCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
+  return CycleNotifier(stages: butterflyCycleStages);
+});
+
 // Define stages for each cycle
 final List<CycleStage> plantCycleStages = [
   CycleStage(
@@ -312,3 +316,69 @@ final List<CycleStage> seasonCycleStages = [
     animationAsset: 'assets/animations/season_cycle/SeasonCycle_Stage 4.gif',
   ),
 ]; 
+final List<CycleStage> butterflyCycleStages = [
+  CycleStage(
+    name: 'Egg',
+    description: 'The butterfly life cycle begins as a tiny egg, often laid on a leaf.',
+    imageAsset: 'assets/images/butterfly_cycle/egg.png',
+    translations: {
+      'es': 'Huevo',
+      'fr': 'Œuf',
+      'hi': 'अंडा',
+    },
+    audioAssets: {
+      'en': 'assets/audio/butterfly_cycle/en/Pro-Egg.mp3',
+      'es': 'assets/audio/butterfly_cycle/es/Pro-Huevo.mp3',
+    },
+    explanationAudio: 'assets/audio/butterfly_cycle/stages/BCEX-S1-Egg.mp3',
+    animationAsset: 'assets/animations/butterfly_cycle/ButterflyCycle_Stage1.gif',
+  ),
+  CycleStage(
+    name: 'Caterpillar',
+    description: 'The egg hatches into a caterpillar (larva), which eats leaves and grows quickly.',
+    imageAsset: 'assets/images/butterfly_cycle/caterpillar.png',
+    translations: {
+      'es': 'Oruga',
+      'fr': 'Chenille',
+      'hi': 'इल्ली',
+    },
+    audioAssets: {
+      'en': 'assets/audio/butterfly_cycle/en/Pro-Caterpillar.mp3',
+      'es': 'assets/audio/butterfly_cycle/es/Pro-Oruga.mp3',
+    },
+    explanationAudio: 'assets/audio/butterfly_cycle/stages/BCEX-S2-Caterpillar.mp3',
+    animationAsset: 'assets/animations/butterfly_cycle/ButterflyCycle_Stage2.gif',
+  ),
+  CycleStage(
+    name: 'Pupa',
+    description: 'The caterpillar forms a pupa (chrysalis), where it transforms into a butterfly.',
+    imageAsset: 'assets/images/butterfly_cycle/pupa.png',
+    translations: {
+      'es': 'Crisálida',
+      'fr': 'Chrysalide',
+      'hi': 'कोष',
+    },
+    audioAssets: {
+      'en': 'assets/audio/butterfly_cycle/en/Pro-Pupa.mp3',
+      'es': 'assets/audio/butterfly_cycle/es/Pro-Crisalida.mp3',
+    },
+    explanationAudio: 'assets/audio/butterfly_cycle/stages/BCEX-S3-Pupa.mp3',
+    animationAsset: 'assets/animations/butterfly_cycle/ButterflyCycle_Stage3.gif',
+  ),
+  CycleStage(
+    name: 'Adult Butterfly',
+    description: 'The adult butterfly emerges from the chrysalis, ready to start the cycle again.',
+    imageAsset: 'assets/images/butterfly_cycle/adult_butterfly.png',
+    translations: {
+      'es': 'Mariposa Adulta',
+      'fr': 'Papillon Adulte',
+      'hi': 'वयस्क तितली',
+    },
+    audioAssets: {
+      'en': 'assets/audio/butterfly_cycle/en/Pro-AdultButterfly.mp3',
+      'es': 'assets/audio/butterfly_cycle/es/Pro-MariposaAdulta.mp3',
+    },
+    explanationAudio: 'assets/audio/butterfly_cycle/stages/BCEX-S4-AdultButterfly.mp3',
+    animationAsset: 'assets/animations/butterfly_cycle/ButterflyCycle_Stage4.gif',
+  ),
+];
