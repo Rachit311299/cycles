@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../custom_button.dart';
 import 'game_results_dialog.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class CycleStageItem {
   final String name;
@@ -39,10 +40,23 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
   List<bool> incorrectPositions = [];
   bool showSuccess = false;
 
+  final FlutterTts _flutterTts = FlutterTts();
+
   @override
   void initState() {
     super.initState();
     resetGame();
+    _flutterTts.setLanguage('en-US');
+    _flutterTts.setSpeechRate(0.85);
+    _flutterTts.setVolume(1.0);
+    _flutterTts.setPitch(1.0);
+    _setBestVoice();
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
   }
 
   void resetGame() {
@@ -348,6 +362,11 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
                 children: shuffledStages.map((stage) {
                   return Draggable<CycleStageItem>(
                     data: stage,
+                    onDragStarted: () async {
+                      await _flutterTts.stop();
+                      await Future.delayed(const Duration(milliseconds: 100));
+                      await _flutterTts.speak(stage.name);
+                    },
                     feedback: SizedBox(
                       width: 100,
                       height: 100,
@@ -436,5 +455,34 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
         ],
       ),
     );
+  }
+
+  Future<void> _setBestVoice() async {
+    final voices = await _flutterTts.getVoices;
+    if (voices is List) {
+      // Prefer Google, female, en-US, en-GB voices
+      final preferred = voices.cast<Map>().where((v) {
+        final name = (v['name'] ?? '').toString().toLowerCase();
+        final locale = (v['locale'] ?? '').toString().toLowerCase();
+        return (name.contains('google') || name.contains('female')) && (locale.contains('en-us') || locale.contains('en-gb'));
+      }).toList();
+      if (preferred.isNotEmpty) {
+        await _flutterTts.setVoice(Map<String, String>.from(preferred.first));
+        return;
+      }
+      // Fallback: any en-US or en-GB voice
+      final english = voices.cast<Map>().where((v) {
+        final locale = (v['locale'] ?? '').toString().toLowerCase();
+        return locale.contains('en-us') || locale.contains('en-gb');
+      }).toList();
+      if (english.isNotEmpty) {
+        await _flutterTts.setVoice(Map<String, String>.from(english.first));
+        return;
+      }
+      // Fallback: just use the first voice
+      if (voices.isNotEmpty) {
+        await _flutterTts.setVoice(Map<String, String>.from(voices.first));
+      }
+    }
   }
 } 

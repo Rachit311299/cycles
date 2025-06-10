@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../custom_button.dart';
 import '../../models/trivia_question.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class CycleTriviaGame extends StatefulWidget {
   final String title;
@@ -27,6 +28,50 @@ class _CycleTriviaGameState extends State<CycleTriviaGame> {
   bool hasAnswered = false;
   int correctAnswers = 0;
   bool showExplanation = false;
+
+  final FlutterTts _flutterTts = FlutterTts();
+
+  @override
+  void initState() {
+    super.initState();
+    _flutterTts.setLanguage('en-US');
+    _flutterTts.setSpeechRate(0.85);
+    _flutterTts.setVolume(1.0);
+    _flutterTts.setPitch(1.0);
+    _setBestVoice();
+  }
+
+  Future<void> _setBestVoice() async {
+    final voices = await _flutterTts.getVoices;
+    if (voices is List) {
+      final preferred = voices.cast<Map>().where((v) {
+        final name = (v['name'] ?? '').toString().toLowerCase();
+        final locale = (v['locale'] ?? '').toString().toLowerCase();
+        return (name.contains('google') || name.contains('female')) && (locale.contains('en-us') || locale.contains('en-gb'));
+      }).toList();
+      if (preferred.isNotEmpty) {
+        await _flutterTts.setVoice(Map<String, String>.from(preferred.first));
+        return;
+      }
+      final english = voices.cast<Map>().where((v) {
+        final locale = (v['locale'] ?? '').toString().toLowerCase();
+        return locale.contains('en-us') || locale.contains('en-gb');
+      }).toList();
+      if (english.isNotEmpty) {
+        await _flutterTts.setVoice(Map<String, String>.from(english.first));
+        return;
+      }
+      if (voices.isNotEmpty) {
+        await _flutterTts.setVoice(Map<String, String>.from(voices.first));
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
+  }
 
   void _checkAnswer() {
     if (selectedAnswerIndex == null) return;
@@ -373,10 +418,12 @@ class _CycleTriviaGameState extends State<CycleTriviaGame> {
                                       : isSelected
                                           ? widget.buttonColor
                                           : Colors.white,
-                              onPressed: hasAnswered ? null : () {
+                              onPressed: hasAnswered ? null : () async {
                                 setState(() {
                                   selectedAnswerIndex = index;
                                 });
+                                await _flutterTts.stop();
+                                await _flutterTts.speak(question.options[index]);
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
