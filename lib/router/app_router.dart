@@ -415,6 +415,80 @@ final appRouter = GoRouter(
         },
       ),
     ),
+    // Frog Cycle Routes
+    GoRoute(
+      path: '/frog-cycle',
+      builder: (context, state) => const CycleMenuView(
+        title: 'Frog Life Cycle',
+        backgroundColor: Color(0xFFE0F7FA),
+        buttonColor: Color(0xFF26A69A),
+        cycleType: 'frog',
+      ),
+    ),
+    GoRoute(
+      path: '/frog-cycle/learn',
+      builder: (context, state) => CycleView(
+        title: 'Frog Life Cycle',
+        backgroundColor: const Color(0xFFE0F7FA),
+        progressBarColor: const Color(0xFF26A69A),
+        imageBackgroundColor: const Color(0xFF26A69A),
+        buttonColor: const Color(0xFF26A69A),
+        cycleType: 'frog',
+        cycleProvider: frogCycleProvider,
+      ),
+    ),
+    GoRoute(
+      path: '/frog-cycle/games',
+      builder: (context, state) => CycleGamesMenu(
+        cycleTitle: 'Frog Life Cycle',
+        backgroundColor: const Color(0xFFE0F7FA),
+        buttonColor: const Color(0xFF26A69A),
+        games: [
+          GameOption(
+            title: 'Cycle Builder',
+            description: 'Arrange the stages in correct order',
+            icon: Icons.sort,
+            route: '/frog-cycle/games/builder',
+          ),
+        ],
+      ),
+    ),
+    GoRoute(
+      path: '/frog-cycle/trivia',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final questions = ref.watch(frogCycleTriviaProvider);
+          return CycleTriviaGame(
+            title: 'Frog Life Cycle Trivia',
+            backgroundColor: const Color(0xFFE0F7FA),
+            buttonColor: const Color(0xFF26A69A),
+            questions: questions,
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: '/frog-cycle/games/builder',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final cycleNotifier = ref.read(frogCycleProvider.notifier);
+          return CycleBuilderGame(
+            title: 'Frog Life Cycle Builder',
+            backgroundColor: const Color(0xFFE0F7FA),
+            buttonColor: const Color(0xFF26A69A),
+            stages: cycleNotifier.stages
+                .map(
+                  (stage) => CycleStageItem(
+                    name: stage.name,
+                    imageAsset: stage.imageAsset,
+                    correctOrder: cycleNotifier.stages.indexOf(stage),
+                  ),
+                )
+                .toList(),
+          );
+        },
+      ),
+    ),
   ],
   redirect: (context, state) => null,
   errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Page not found!')))

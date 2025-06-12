@@ -221,6 +221,12 @@ class HomePage extends StatelessWidget {
                       textColor: const Color.fromARGB(255, 255, 225, 181),
                       onTap: () => context.push('/butterfly-cycle'),
                     ),
+                    CycleCard(
+                      title: 'Frog Life Cycle',
+                      backgroundImage: 'assets/images/frog_cycle.jpg',
+                      textColor: const Color(0xFFE0F7FA),
+                      onTap: () => context.push('/frog-cycle'),
+                    ),
                     
                   ],
                 ),

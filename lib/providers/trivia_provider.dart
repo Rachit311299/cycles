@@ -280,4 +280,59 @@ final butterflyCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
       explanation: 'The adult butterfly\'s main purpose is to reproduce and lay eggs, starting the cycle again.',
     ),
   ];
+});
+
+final frogCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
+  return [
+    TriviaQuestion(
+      question: 'What is the first stage of a frog\'s life cycle?',
+      options: ['Egg', 'Tadpole', 'Froglet', 'Adult Frog'],
+      correctAnswerIndex: 0,
+      explanation: 'The frog life cycle begins as a tiny egg, usually laid in water.',
+    ),
+    TriviaQuestion(
+      question: 'What does a tadpole use to breathe?',
+      options: [
+        'Lungs',
+        'Gills',
+        'Skin',
+        'Both gills and lungs'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Tadpoles breathe through gills while living in water.',
+    ),
+    TriviaQuestion(
+      question: 'What happens during the froglet stage?',
+      options: [
+        'The frog lays eggs',
+        'The tadpole develops legs and lungs',
+        'The frog hibernates',
+        'The frog changes color'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'During the froglet stage, the tadpole develops legs and lungs, preparing for life on land.',
+    ),
+    TriviaQuestion(
+      question: 'What is the main difference between a froglet and an adult frog?',
+      options: [
+        'The froglet is larger',
+        'The froglet has a tail',
+        'The adult frog can reproduce',
+        'The adult frog lives in water'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'The main difference is that adult frogs are capable of reproduction, while froglets are not yet mature.',
+    ),
+    TriviaQuestion(
+      question: 'Where do frogs typically lay their eggs?',
+      options: [
+        'On land',
+        'In water',
+        'In trees',
+        'Underground'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Frogs typically lay their eggs in water to keep them moist and provide a suitable environment for tadpoles.',
+    ),
+  ];
 }); 

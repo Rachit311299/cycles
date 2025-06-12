@@ -43,6 +43,10 @@ final butterflyCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
   return CycleNotifier(stages: butterflyCycleStages);
 });
 
+final frogCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
+  return CycleNotifier(stages: frogCycleStages);
+});
+
 // Define stages for each cycle
 final List<CycleStage> plantCycleStages = [
   CycleStage(
@@ -380,5 +384,72 @@ final List<CycleStage> butterflyCycleStages = [
     },
     explanationAudio: 'assets/audio/butterfly_cycle/stages/BCEX-S4-AdultButterfly.mp3',
     animationAsset: 'assets/animations/butterfly_cycle/ButterflyCycle_Stage4.gif',
+  ),
+];
+
+final List<CycleStage> frogCycleStages = [
+  CycleStage(
+    name: 'Egg',
+    description: 'The frog life cycle begins as a tiny egg, usually laid in water.',
+    imageAsset: 'assets/images/frog_cycle/frog_egg.png',
+    translations: {
+      'es': 'Huevo',
+      'fr': 'Œuf',
+      'hi': 'अंडा',
+    },
+    audioAssets: {
+      'en': 'assets/audio/frog_cycle/en/Pro-frog_egg.mp3',
+      'es': 'assets/audio/frog_cycle/es/Pro-Huevo.mp3',
+    },
+    explanationAudio: 'assets/audio/frog_cycle/stages/FCEX-S1-frog_egg.mp3',
+    animationAsset: 'assets/animations/frog_cycle/FrogCycle_Stage1.gif',
+  ),
+  CycleStage(
+    name: 'Tadpole',
+    description: 'The egg hatches into a tadpole, which lives in water and breathes through gills.',
+    imageAsset: 'assets/images/frog_cycle/tadpole.png',
+    translations: {
+      'es': 'Renacuajo',
+      'fr': 'Têtard',
+      'hi': 'टैडपोल',
+    },
+    audioAssets: {
+      'en': 'assets/audio/frog_cycle/en/Pro-Tadpole.mp3',
+      'es': 'assets/audio/frog_cycle/es/Pro-Renacuajo.mp3',
+    },
+    explanationAudio: 'assets/audio/frog_cycle/stages/FCEX-S2-Tadpole.mp3',
+    animationAsset: 'assets/animations/frog_cycle/FrogCycle_Stage2.gif',
+  ),
+  CycleStage(
+    name: 'Froglet',
+    description: 'The tadpole develops legs and lungs, becoming a froglet.',
+    imageAsset: 'assets/images/frog_cycle/froglet.png',
+    translations: {
+      'es': 'Rana Joven',
+      'fr': 'Jeune Grenouille',
+      'hi': 'छोटा मेंढक',
+    },
+    audioAssets: {
+      'en': 'assets/audio/frog_cycle/en/Pro-Froglet.mp3',
+      'es': 'assets/audio/frog_cycle/es/Pro-RanaJoven.mp3',
+    },
+    explanationAudio: 'assets/audio/frog_cycle/stages/FCEX-S3-Froglet.mp3',
+    animationAsset: 'assets/animations/frog_cycle/FrogCycle_Stage3.gif',
+  ),
+  CycleStage(
+    name: 'Adult Frog',
+    description: 'The froglet completes its transformation into an adult frog, ready to reproduce.',
+    imageAsset: 'assets/images/frog_cycle/adult_frog.png',
+    translations: {
+      'es': 'Rana Adulta',
+      'fr': 'Grenouille Adulte',
+      'hi': 'वयस्क मेंढक',
+    },
+    audioAssets: {
+      'en': 'assets/audio/frog_cycle/en/Pro-AdultFrog.mp3',
+      'es': 'assets/audio/frog_cycle/es/Pro-RanaAdulta.mp3',
+    },
+    explanationAudio: 'assets/audio/frog_cycle/stages/FCEX-S4-AdultFrog.mp3',
+    animationAsset: 'assets/animations/frog_cycle/FrogCycle_Stage4.gif',
   ),
 ];

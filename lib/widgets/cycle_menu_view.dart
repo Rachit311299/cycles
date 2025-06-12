@@ -48,6 +48,10 @@ class _CycleMenuViewState extends ConsumerState<CycleMenuView> {
         return rockCycleProvider;
       case 'season':
         return seasonCycleProvider;
+      case 'butterfly':
+        return butterflyCycleProvider;
+      case 'frog':
+        return frogCycleProvider;
       default:
         return null;
     }
