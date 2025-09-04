@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../custom_button.dart';
 import 'game_results_dialog.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import '../../providers/xp_provider.dart';
+import '../../models/xp_data.dart';
 
 class CycleStageItem {
   final String name;
@@ -16,11 +19,12 @@ class CycleStageItem {
   });
 }
 
-class CycleBuilderGame extends StatefulWidget {
+class CycleBuilderGame extends ConsumerStatefulWidget {
   final String title;
   final Color backgroundColor;
   final Color buttonColor;
   final List<CycleStageItem> stages;
+  final String cycleType; // Add cycle type for XP tracking
 
   const CycleBuilderGame({
     Key? key,
@@ -28,13 +32,14 @@ class CycleBuilderGame extends StatefulWidget {
     required this.backgroundColor,
     required this.buttonColor,
     required this.stages,
+    required this.cycleType,
   }) : super(key: key);
 
   @override
-  State<CycleBuilderGame> createState() => _CycleBuilderGameState();
+  ConsumerState<CycleBuilderGame> createState() => _CycleBuilderGameState();
 }
 
-class _CycleBuilderGameState extends State<CycleBuilderGame> {
+class _CycleBuilderGameState extends ConsumerState<CycleBuilderGame> {
   late List<CycleStageItem> shuffledStages;
   List<CycleStageItem?> orderedStages = [];
   List<bool> incorrectPositions = [];
@@ -65,6 +70,12 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
       orderedStages = List.filled(widget.stages.length, null);
       incorrectPositions = List.filled(widget.stages.length, false);
       showSuccess = false;
+    });
+  }
+
+  void clearIncorrectPositions() {
+    setState(() {
+      incorrectPositions = List.filled(widget.stages.length, false);
     });
   }
 
@@ -110,11 +121,38 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
     }
   }
 
-  void _showResults() {
+  void _showResults() async {
     final correctCount = orderedStages.asMap().entries
         .where((entry) => entry.value?.correctOrder == entry.key)
         .length;
     final score = correctCount / widget.stages.length;
+
+    // Calculate XP
+    final gameKey = 'builder_${widget.cycleType}';
+    final xpData = ref.read(xpDataProvider);
+    final isFirstTime = !xpData.firstTimeCompletions.containsKey(gameKey) || 
+                       !xpData.firstTimeCompletions[gameKey]!;
+    final xpEarned = XPCalculator.calculateBuilderXP(score, isFirstTime);
+
+    // Create game result
+    final gameResult = GameResult(
+      gameType: 'builder',
+      cycleType: widget.cycleType,
+      score: score,
+      xpEarned: xpEarned,
+      timestamp: DateTime.now(),
+      isFirstTime: isFirstTime,
+    );
+
+    // Add to XP system
+    try {
+      await ref.read(xpDataProvider.notifier).addGameResult(gameResult);
+    } catch (e) {
+      print('Failed to add game result to XP system: $e');
+    }
+
+    // Check if widget is still mounted before showing dialog
+    if (!mounted) return;
 
     showDialog(
       context: context,
@@ -125,6 +163,8 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
         total: widget.stages.length,
         themeColor: widget.buttonColor,
         gameType: 'Cycle Builder',
+        xpEarned: xpEarned,
+        isFirstTime: isFirstTime,
         onTryAgain: () {
           setState(() {
             resetGame();
@@ -324,9 +364,20 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.refresh, color: widget.buttonColor),
-                    onPressed: resetGame,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.clear, color: widget.buttonColor),
+                        onPressed: clearIncorrectPositions,
+                        tooltip: 'Clear mistakes',
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.refresh, color: widget.buttonColor),
+                        onPressed: resetGame,
+                        tooltip: 'Reset game',
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -404,6 +455,20 @@ class _CycleBuilderGameState extends State<CycleBuilderGame> {
                   if (isCorrect) {
                     setState(() {
                       showSuccess = true;
+                    });
+                    // Show results dialog after a short delay to let the success message show
+                    Future.delayed(const Duration(milliseconds: 1500), () {
+                      if (mounted) {
+                        _showResults();
+                      }
+                    });
+                  } else {
+                    // For incorrect answers, show results dialog after feedback is shown
+                    // This gives users time to see which positions are wrong
+                    Future.delayed(const Duration(milliseconds: 2000), () {
+                      if (mounted) {
+                        _showResults();
+                      }
                     });
                   }
                 },

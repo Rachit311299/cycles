@@ -2,10 +2,25 @@ import 'package:cycles/widgets/custom_button.dart';
 import 'package:cycles/widgets/custom_profile_button.dart';
 import 'package:cycles/widgets/cycle_card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/xp_provider.dart';
 
-class HomePage extends StatelessWidget {
+
+class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  /// Get XP required for a specific level
+  int _getXPForLevel(int level) {
+    switch (level) {
+      case 1: return 0;      // Beginner
+      case 2: return 100;    // Explorer
+      case 3: return 250;    // Scholar
+      case 4: return 500;    // Expert
+      case 5: return 1000;   // Master
+      default: return 0;
+    }
+  }
 
   void _showTranslateBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -118,7 +133,15 @@ class HomePage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final xpData = ref.watch(xpDataProvider);
+    
+    // Calculate XP progress for current level
+    final currentLevelXP = _getXPForLevel(xpData.currentLevel);
+    final nextLevelXP = _getXPForLevel(xpData.currentLevel + 1);
+    final progressInLevel = (xpData.totalXP - currentLevelXP) / (nextLevelXP - currentLevelXP);
+    final xpProgress = progressInLevel.clamp(0.0, 1.0);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -145,11 +168,11 @@ class HomePage extends StatelessWidget {
                     onTap: () {
                       context.push('/profile');
                     },
-                    child: const ProfileButton(
+                    child: ProfileButton(
                       imageUrl:
                           'https://img.freepik.com/free-vector/flat-style-woman-avatar_90220-2876.jpg',
-                      xpProgress: 0.3, // 30% XP progress
-                      level: 5,        // Example level
+                      xpProgress: xpProgress, // Dynamic XP progress
+                      level: xpData.currentLevel, // Dynamic level
                     ),
                   ),
                   // Settings Button

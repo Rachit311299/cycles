@@ -73,6 +73,7 @@ final appRouter = GoRouter(
                 backgroundColor: const Color(0xFFE8F3D6),
                 buttonColor: const Color(0xFF93D253),
                 questions: questions,
+                cycleType: 'plant',
               );
             },
           ),
@@ -87,6 +88,7 @@ final appRouter = GoRouter(
                 title: 'Plant Cycle Builder',
                 backgroundColor: const Color(0xFFE8F3D6),
                 buttonColor: const Color(0xFF93D253),
+                cycleType: 'plant',
                 stages:
                     cycleNotifier.stages
                         .map(
@@ -153,6 +155,7 @@ final appRouter = GoRouter(
                 backgroundColor: const Color(0xFFB9F5FF),
                 buttonColor: const Color(0xFF22A9E0),
                 questions: questions,
+                cycleType: 'water',
               );
             },
           ),
@@ -167,6 +170,7 @@ final appRouter = GoRouter(
                 title: 'Water Cycle Builder',
                 backgroundColor: const Color(0xFFB9F5FF),
                 buttonColor: const Color(0xFF22A9E0),
+                cycleType: 'water',
                 stages:
                     cycleNotifier.stages
                         .map(
@@ -233,6 +237,7 @@ final appRouter = GoRouter(
                 backgroundColor: const Color(0xFFF5E6CA),
                 buttonColor: const Color(0xFF996A42),
                 questions: questions,
+                cycleType: 'rock',
               );
             },
           ),
@@ -247,6 +252,7 @@ final appRouter = GoRouter(
                 title: 'Rock Cycle Builder',
                 backgroundColor: const Color(0xFFF5E6CA),
                 buttonColor: const Color(0xFF996A42),
+                cycleType: 'rock',
                 stages:
                     cycleNotifier.stages
                         .map(
@@ -313,6 +319,7 @@ final appRouter = GoRouter(
                 backgroundColor: const Color(0xFFFFE4E1),
                 buttonColor: const Color(0xFFFF6B6B),
                 questions: questions,
+                cycleType: 'season',
               );
             },
           ),
@@ -327,6 +334,7 @@ final appRouter = GoRouter(
                 title: 'Season Cycle Builder',
                 backgroundColor: const Color(0xFFFFE4E1),
                 buttonColor: const Color(0xFFFF6B6B),
+                cycleType: 'season',
                 stages:
                     cycleNotifier.stages
                         .map(
@@ -389,6 +397,7 @@ final appRouter = GoRouter(
             backgroundColor: const Color(0xFFFFECB3),
             buttonColor: const Color(0xFFFFA726),
             questions: questions,
+            cycleType: 'butterfly',
           );
         },
       ),
@@ -402,6 +411,7 @@ final appRouter = GoRouter(
             title: 'Butterfly Cycle Builder',
             backgroundColor: const Color(0xFFFFECB3),
             buttonColor: const Color(0xFFFFA726),
+            cycleType: 'butterfly',
             stages: cycleNotifier.stages
                 .map(
                   (stage) => CycleStageItem(
@@ -463,6 +473,7 @@ final appRouter = GoRouter(
             backgroundColor: const Color(0xFFE0F7FA),
             buttonColor: const Color(0xFF26A69A),
             questions: questions,
+            cycleType: 'frog',
           );
         },
       ),
@@ -476,6 +487,7 @@ final appRouter = GoRouter(
             title: 'Frog Life Cycle Builder',
             backgroundColor: const Color(0xFFE0F7FA),
             buttonColor: const Color(0xFF26A69A),
+            cycleType: 'frog',
             stages: cycleNotifier.stages
                 .map(
                   (stage) => CycleStageItem(

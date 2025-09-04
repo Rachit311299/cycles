@@ -9,6 +9,8 @@ class GameResultsDialog extends StatelessWidget {
   final Color themeColor;
   final VoidCallback onTryAgain;
   final String gameType;
+  final int xpEarned;
+  final bool isFirstTime;
 
   const GameResultsDialog({
     super.key,
@@ -18,6 +20,8 @@ class GameResultsDialog extends StatelessWidget {
     required this.themeColor,
     required this.onTryAgain,
     required this.gameType,
+    required this.xpEarned,
+    required this.isFirstTime,
   });
 
   String _getResultMessage(double percentage) {
@@ -144,6 +148,58 @@ class GameResultsDialog extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 24),
+            
+            // XP Earned Section
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.amber.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.amber.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.star,
+                    color: Colors.amber.shade700,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '+$xpEarned XP',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'PoetsenOne',
+                      color: Colors.amber.shade700,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (isFirstTime) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'FIRST TIME!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
             const SizedBox(height: 32),
             
             Row(
@@ -156,11 +212,17 @@ class GameResultsDialog extends StatelessWidget {
                     buttonColor: Colors.grey.shade200,
                     onPressed: () {
                       context.pop(); // Close dialog
-                      context.pop(); // Return to games menu
+                      if (gameType == 'Cycle Builder') {
+                        // For builder games, just close the dialog, don't exit the game
+                        // This allows users to see their mistakes and try again
+                      } else {
+                        // For trivia games, exit to games menu
+                        context.pop(); // Return to games menu
+                      }
                     },
-                    child: const Text(
-                      'Exit',
-                      style: TextStyle(
+                    child: Text(
+                      gameType == 'Cycle Builder' ? 'Close' : 'Exit',
+                      style: const TextStyle(
                         color: Colors.black87,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -168,27 +230,30 @@ class GameResultsDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: CustomButton(
-                    height: 48,
-                    width: double.infinity,
-                    cornerRadius: 12,
-                    buttonColor: themeColor,
-                    onPressed: () {
-                      context.pop(); // Close dialog
-                      onTryAgain();
-                    },
-                    child: const Text(
-                      'Try Again',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                if (score >= 1.0) ...[
+                  // Only show "Try Again" for perfect scores
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CustomButton(
+                      height: 48,
+                      width: double.infinity,
+                      cornerRadius: 12,
+                      buttonColor: themeColor,
+                      onPressed: () {
+                        context.pop(); // Close dialog
+                        onTryAgain();
+                      },
+                      child: const Text(
+                        'Try Again',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ],

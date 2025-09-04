@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../custom_button.dart';
 import '../../models/trivia_question.dart';
+import '../../providers/xp_provider.dart';
+import '../../models/xp_data.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-class CycleTriviaGame extends StatefulWidget {
+class CycleTriviaGame extends ConsumerStatefulWidget {
   final String title;
   final Color backgroundColor;
   final Color buttonColor;
   final List<TriviaQuestion> questions;
+  final String cycleType; // Add cycle type for XP tracking
 
   const CycleTriviaGame({
     super.key,
@@ -16,13 +20,14 @@ class CycleTriviaGame extends StatefulWidget {
     required this.backgroundColor,
     required this.buttonColor,
     required this.questions,
+    required this.cycleType,
   });
 
   @override
-  State<CycleTriviaGame> createState() => _CycleTriviaGameState();
+  ConsumerState<CycleTriviaGame> createState() => _CycleTriviaGameState();
 }
 
-class _CycleTriviaGameState extends State<CycleTriviaGame> {
+class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
   int currentQuestionIndex = 0;
   int? selectedAnswerIndex;
   bool hasAnswered = false;
@@ -98,9 +103,33 @@ class _CycleTriviaGameState extends State<CycleTriviaGame> {
     }
   }
 
-  void _showResults() {
+  void _showResults() async {
     final percentage = correctAnswers / widget.questions.length;
     final isHighScore = percentage >= 0.7;
+
+    // Calculate XP
+    final gameKey = 'trivia_${widget.cycleType}';
+    final xpData = ref.read(xpDataProvider);
+    final isFirstTime = !xpData.firstTimeCompletions.containsKey(gameKey) || 
+                       !xpData.firstTimeCompletions[gameKey]!;
+    final xpEarned = XPCalculator.calculateTriviaXP(percentage, isFirstTime);
+
+    // Create game result
+    final gameResult = GameResult(
+      gameType: 'trivia',
+      cycleType: widget.cycleType,
+      score: percentage,
+      xpEarned: xpEarned,
+      timestamp: DateTime.now(),
+      isFirstTime: isFirstTime,
+    );
+
+    // Add to XP system
+    try {
+      await ref.read(xpDataProvider.notifier).addGameResult(gameResult);
+    } catch (e) {
+      print('Failed to add game result to XP system: $e');
+    }
     
     showDialog(
       context: context,
@@ -219,6 +248,58 @@ class _CycleTriviaGameState extends State<CycleTriviaGame> {
                   height: 1.3,
                 ),
                 textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              
+              // XP Earned Section
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.amber.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.star,
+                      color: Colors.amber.shade700,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '+$xpEarned XP',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'PoetsenOne',
+                        color: Colors.amber.shade700,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (isFirstTime) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'FIRST TIME!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
               const SizedBox(height: 32),
               
