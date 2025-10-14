@@ -250,6 +250,12 @@ class HomePage extends ConsumerWidget {
                       textColor: const Color(0xFFE0F7FA),
                       onTap: () => context.push('/frog-cycle'),
                     ),
+                    CycleCard(
+                      title: 'Day and Night Cycle',
+                      backgroundImage: 'assets/images/day_night_cycle.jpg',
+                      textColor: const Color(0xFFE8EAF6),
+                      onTap: () => context.push('/day-night-cycle'),
+                    ),
                     
                   ],
                 ),

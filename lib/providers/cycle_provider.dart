@@ -47,6 +47,10 @@ final frogCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
   return CycleNotifier(stages: frogCycleStages);
 });
 
+final dayNightCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
+  return CycleNotifier(stages: dayNightCycleStages);
+});
+
 // Define stages for each cycle
 final List<CycleStage> plantCycleStages = [
   CycleStage(
@@ -451,5 +455,88 @@ final List<CycleStage> frogCycleStages = [
     },
     explanationAudio: 'assets/audio/frog_cycle/stages/FCEX-S4-AdultFrog.mp3',
     animationAsset: 'assets/animations/frog_cycle/FrogCycle_Stage4.gif',
+  ),
+];
+
+final List<CycleStage> dayNightCycleStages = [
+  CycleStage(
+    name: 'Sunrise',
+    description: 'The sun rises in the east, marking the beginning of a new day with beautiful colors in the sky.',
+    imageAsset: 'assets/images/day_night_cycle/sunrise.jpg',
+    translations: {
+      'es': 'Amanecer',
+      'fr': 'Lever du soleil',
+      'hi': 'सूर्योदय',
+    },
+    audioAssets: {
+      'en': 'assets/audio/day_night_cycle/en/Pro-Sunrise.mp3',
+      'es': 'assets/audio/day_night_cycle/es/Pro-Amanecer.mp3',
+    },
+    explanationAudio: 'assets/audio/day_night_cycle/stages/DNCEX-S1-Sunrise.mp3',
+    animationAsset: 'assets/animations/day_night_cycle/DayNightCycle_Stage1.gif',
+  ),
+  CycleStage(
+    name: 'Morning',
+    description: 'Morning brings bright sunlight and the start of daily activities as the day begins.',
+    imageAsset: 'assets/images/day_night_cycle/morning.jpg',
+    translations: {
+      'es': 'Mañana',
+      'fr': 'Matin',
+      'hi': 'सुबह',
+    },
+    audioAssets: {
+      'en': 'assets/audio/day_night_cycle/en/Pro-Morning.mp3',
+      'es': 'assets/audio/day_night_cycle/es/Pro-Manana.mp3',
+    },
+    explanationAudio: 'assets/audio/day_night_cycle/stages/DNCEX-S2-Morning.mp3',
+    animationAsset: 'assets/animations/day_night_cycle/DayNightCycle_Stage2.gif',
+  ),
+  CycleStage(
+    name: 'Afternoon',
+    description: 'Afternoon is the middle of the day when the sun is at its highest point in the sky.',
+    imageAsset: 'assets/images/day_night_cycle/afternoon.jpg',
+    translations: {
+      'es': 'Tarde',
+      'fr': 'Après-midi',
+      'hi': 'दोपहर',
+    },
+    audioAssets: {
+      'en': 'assets/audio/day_night_cycle/en/Pro-Afternoon.mp3',
+      'es': 'assets/audio/day_night_cycle/es/Pro-Tarde.mp3',
+    },
+    explanationAudio: 'assets/audio/day_night_cycle/stages/DNCEX-S3-Afternoon.mp3',
+    animationAsset: 'assets/animations/day_night_cycle/DayNightCycle_Stage3.gif',
+  ),
+  CycleStage(
+    name: 'Evening',
+    description: 'Evening is when the sun begins to set, creating beautiful colors in the sky as day transitions to night.',
+    imageAsset: 'assets/images/day_night_cycle/evening.jpg',
+    translations: {
+      'es': 'Noche',
+      'fr': 'Soir',
+      'hi': 'शाम',
+    },
+    audioAssets: {
+      'en': 'assets/audio/day_night_cycle/en/Pro-Evening.mp3',
+      'es': 'assets/audio/day_night_cycle/es/Pro-Noche.mp3',
+    },
+    explanationAudio: 'assets/audio/day_night_cycle/stages/DNCEX-S4-Evening.mp3',
+    animationAsset: 'assets/animations/day_night_cycle/DayNightCycle_Stage4.gif',
+  ),
+  CycleStage(
+    name: 'Night',
+    description: 'Night is when the sun has set and darkness covers the land, with stars and the moon visible in the sky.',
+    imageAsset: 'assets/images/day_night_cycle/night.jpg',
+    translations: {
+      'es': 'Noche',
+      'fr': 'Nuit',
+      'hi': 'रात',
+    },
+    audioAssets: {
+      'en': 'assets/audio/day_night_cycle/en/Pro-Night.mp3',
+      'es': 'assets/audio/day_night_cycle/es/Pro-Noche.mp3',
+    },
+    explanationAudio: 'assets/audio/day_night_cycle/stages/DNCEX-S5-Night.mp3',
+    animationAsset: 'assets/animations/day_night_cycle/DayNightCycle_Stage5.gif',
   ),
 ];

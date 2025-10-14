@@ -52,6 +52,8 @@ class _CycleMenuViewState extends ConsumerState<CycleMenuView> {
         return butterflyCycleProvider;
       case 'frog':
         return frogCycleProvider;
+      case 'day-night':
+        return dayNightCycleProvider;
       default:
         return null;
     }

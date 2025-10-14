@@ -335,4 +335,76 @@ final frogCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
       explanation: 'Frogs typically lay their eggs in water to keep them moist and provide a suitable environment for tadpoles.',
     ),
   ];
+});
+
+final dayNightCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
+  return [
+    TriviaQuestion(
+      question: 'What is the first stage of the day and night cycle?',
+      options: ['Morning', 'Sunrise', 'Afternoon', 'Evening'],
+      correctAnswerIndex: 1,
+      explanation: 'The day and night cycle begins with sunrise, when the sun rises in the east.',
+    ),
+    TriviaQuestion(
+      question: 'What happens during sunrise?',
+      options: [
+        'The sun sets in the west',
+        'The sun rises in the east with beautiful colors',
+        'The sun is at its highest point',
+        'The sky becomes completely dark'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Sunrise occurs when the sun rises in the east, often creating beautiful colors in the sky.',
+    ),
+    TriviaQuestion(
+      question: 'Which stage comes after morning in the day cycle?',
+      options: ['Sunrise', 'Evening', 'Afternoon', 'Night'],
+      correctAnswerIndex: 2,
+      explanation: 'After morning comes afternoon, when the sun is at its highest point in the sky.',
+    ),
+    TriviaQuestion(
+      question: 'What characterizes the afternoon stage?',
+      options: [
+        'The sun is rising',
+        'The sun is at its highest point',
+        'The sun is setting',
+        'It is completely dark'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Afternoon is characterized by the sun being at its highest point in the sky.',
+    ),
+    TriviaQuestion(
+      question: 'What happens during evening?',
+      options: [
+        'The sun rises',
+        'The sun sets and creates beautiful sky colors',
+        'The sun is at its highest point',
+        'It becomes completely dark'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Evening is when the sun begins to set, often creating beautiful colors in the sky.',
+    ),
+    TriviaQuestion(
+      question: 'What can you see in the sky during night?',
+      options: [
+        'Only the sun',
+        'Only clouds',
+        'Stars and the moon',
+        'Only darkness'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'During night, you can see stars and the moon in the dark sky.',
+    ),
+    TriviaQuestion(
+      question: 'What causes the day and night cycle?',
+      options: [
+        'The moon\'s rotation',
+        'The Earth\'s rotation on its axis',
+        'The sun\'s movement',
+        'Clouds covering the sun'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'The day and night cycle is caused by the Earth\'s rotation on its axis, which makes different parts of Earth face the sun at different times.',
+    ),
+  ];
 }); 

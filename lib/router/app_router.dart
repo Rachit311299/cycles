@@ -501,6 +501,82 @@ final appRouter = GoRouter(
         },
       ),
     ),
+    // Day and Night Cycle Routes
+    GoRoute(
+      path: '/day-night-cycle',
+      builder: (context, state) => const CycleMenuView(
+        title: 'Day and Night Cycle',
+        backgroundColor: Color(0xFFE8EAF6),
+        buttonColor: Color(0xFF3F51B5),
+        cycleType: 'day-night',
+      ),
+    ),
+    GoRoute(
+      path: '/day-night-cycle/learn',
+      builder: (context, state) => CycleView(
+        title: 'Day and Night Cycle',
+        backgroundColor: const Color(0xFFE8EAF6),
+        progressBarColor: const Color(0xFF3F51B5),
+        imageBackgroundColor: const Color(0xFF3F51B5),
+        buttonColor: const Color(0xFF3F51B5),
+        cycleType: 'day-night',
+        cycleProvider: dayNightCycleProvider,
+      ),
+    ),
+    GoRoute(
+      path: '/day-night-cycle/games',
+      builder: (context, state) => CycleGamesMenu(
+        cycleTitle: 'Day and Night Cycle',
+        backgroundColor: const Color(0xFFE8EAF6),
+        buttonColor: const Color(0xFF3F51B5),
+        games: [
+          GameOption(
+            title: 'Cycle Builder',
+            description: 'Arrange the stages in correct order',
+            icon: Icons.sort,
+            route: '/day-night-cycle/games/builder',
+          ),
+        ],
+      ),
+    ),
+    GoRoute(
+      path: '/day-night-cycle/trivia',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final questions = ref.watch(dayNightCycleTriviaProvider);
+          return CycleTriviaGame(
+            title: 'Day and Night Cycle Trivia',
+            backgroundColor: const Color(0xFFE8EAF6),
+            buttonColor: const Color(0xFF3F51B5),
+            questions: questions,
+            cycleType: 'day-night',
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: '/day-night-cycle/games/builder',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final cycleNotifier = ref.read(dayNightCycleProvider.notifier);
+          return CycleBuilderGame(
+            title: 'Day and Night Cycle Builder',
+            backgroundColor: const Color(0xFFE8EAF6),
+            buttonColor: const Color(0xFF3F51B5),
+            cycleType: 'day-night',
+            stages: cycleNotifier.stages
+                .map(
+                  (stage) => CycleStageItem(
+                    name: stage.name,
+                    imageAsset: stage.imageAsset,
+                    correctOrder: cycleNotifier.stages.indexOf(stage),
+                  ),
+                )
+                .toList(),
+          );
+        },
+      ),
+    ),
   ],
   redirect: (context, state) => null,
   errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Page not found!')))

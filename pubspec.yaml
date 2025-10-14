@@ -75,6 +75,7 @@ flutter:
     - assets/images/season_cycle/
     - assets/images/butterfly_cycle/
     - assets/images/frog_cycle/
+    - assets/images/day_night_cycle/
     - assets/audio/
     - assets/audio/plant_cycle/
     - assets/audio/plant_cycle/en/
