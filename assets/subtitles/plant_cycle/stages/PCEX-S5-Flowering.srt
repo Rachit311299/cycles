@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:00:03,500
+The plant produces flowers to enable reproduction.
+
+2
+00:00:03,500 --> 00:00:07,000
+Flowers contain the reproductive organs needed for pollination.
+
+3
+00:00:07,000 --> 00:00:10,500
+Bees and other insects help transfer pollen between flowers.
+
+4
+00:00:10,500 --> 00:00:14,000
+After pollination, the flower will develop into seeds for new plants.

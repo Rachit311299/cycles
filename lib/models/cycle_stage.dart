@@ -4,7 +4,9 @@ class CycleStage {
   final String imageAsset;
   final Map<String, String> translations;
   final Map<String, String>? audioAssets;
+  final Map<String, String>? explanationAudioAssets;
   final String? explanationAudio;
+  final String? explanationSubtitles;
   final String? animationAsset;
 
   CycleStage({
@@ -13,7 +15,9 @@ class CycleStage {
     required this.imageAsset,
     required this.translations,
     this.audioAssets,
+    this.explanationAudioAssets,
     this.explanationAudio,
+    this.explanationSubtitles,
     this.animationAsset,
   });
 }

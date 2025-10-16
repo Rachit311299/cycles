@@ -63,10 +63,14 @@ final List<CycleStage> plantCycleStages = [
       'hi': 'बीज',
     },
     audioAssets: {
-      'en': 'aasets/audio/plant_cycle/en/Pro-Seeds.mp3',
-      'es': 'aasets/audio/plant_cycle/es/Pro-Semilias.mp3',
+      'en': 'assets/audio/plant_cycle/en/Pro-Seeds.mp3',
+      'es': 'assets/audio/plant_cycle/es/Pro-Semilias.mp3',
     },
-    explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S1-Seeds.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/plant_cycle/stages/en/PCEXen-S1-Seeds.mp3',
+      'es': 'assets/audio/plant_cycle/stages/es/PCEXes-S1-Seeds.mp3',
+    },
+    explanationSubtitles: 'assets/subtitles/plant_cycle/stages/PCEX-S1-Seeds.srt',
     animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 1.gif',
   ),
   CycleStage(
@@ -79,10 +83,14 @@ final List<CycleStage> plantCycleStages = [
       'hi': 'अंकुरण',
     },
     audioAssets: {
-      'en': 'aasets/audio/plant_cycle/en/Pro-Germination.mp3',
-      'es': 'aasets/audio/plant_cycle/es/Pro-Germinacion.mp3',
+      'en': 'assets/audio/plant_cycle/en/Pro-Germination.mp3',
+      'es': 'assets/audio/plant_cycle/es/Pro-Germinacion.mp3',
     },
-    explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S2-Germination.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/plant_cycle/stages/en/PCEXen-S2-Germination.mp3',
+      'es': 'assets/audio/plant_cycle/stages/es/PCEXes-S2-Germination.mp3',
+    },
+    explanationSubtitles: 'assets/subtitles/plant_cycle/stages/PCEX-S2-Germination.srt',
     animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 2.gif',
   ),
   CycleStage(
@@ -95,10 +103,14 @@ final List<CycleStage> plantCycleStages = [
       'hi': 'अंकुर',
     },
     audioAssets: {
-      'en': 'aasets/audio/plant_cycle/en/Pro-seedling.mp3',
-      'es': 'aasets/audio/plant_cycle/es/Pro-plantula.mp3',
+      'en': 'assets/audio/plant_cycle/en/Pro-Seedling.mp3',
+      'es': 'assets/audio/plant_cycle/es/Pro-plantula.mp3',
     },
-    explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S3-Seedling.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/plant_cycle/stages/en/PCEXen-S3-Seedling.mp3',
+      'es': 'assets/audio/plant_cycle/stages/es/PCEXes-S3-Seedling.mp3',
+    },
+    explanationSubtitles: 'assets/subtitles/plant_cycle/stages/PCEX-S3-Seedling.srt',
     animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 3.gif',
   ),
   CycleStage(
@@ -111,10 +123,14 @@ final List<CycleStage> plantCycleStages = [
       'hi': 'वयस्क पौधा',
     },
     audioAssets: {
-      'en': 'aasets/audio/plant_cycle/en/Pro-Adultplant.mp3',
-      'es': 'aasets/audio/plant_cycle/es/Pro-planatadulta.mp3',
+      'en': 'assets/audio/plant_cycle/en/Pro-Adultplant.mp3',
+      'es': 'assets/audio/plant_cycle/es/Pro-planatadulta.mp3',
     },
-    explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S4-AdultPlant.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/plant_cycle/stages/en/PCEXen-S4-AdultPlant.mp3',
+      'es': 'assets/audio/plant_cycle/stages/es/PCEXes-S4-AdultPlant.mp3',
+    },
+    explanationSubtitles: 'assets/subtitles/plant_cycle/stages/PCEX-S4-AdultPlant.srt',
     animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 4.gif',
 
     
@@ -132,7 +148,11 @@ final List<CycleStage> plantCycleStages = [
       'en': 'assets/audio/plant_cycle/en/Pro-Flowering.mp3',
       'es': 'assets/audio/plant_cycle/es/Pro-Floracion.mp3',
     },
-    explanationAudio: 'assets/audio/plant_cycle/stages/PCEX-S5-Flowering.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/plant_cycle/stages/en/PCEXen-S5-Flowering.mp3',
+      'es': 'assets/audio/plant_cycle/stages/es/PCEXes-S5-Flowering.mp3',
+    },
+    explanationSubtitles: 'assets/subtitles/plant_cycle/stages/PCEX-S5-Flowering.srt',
     animationAsset: 'assets/animations/plant_cycle/PlantCycle_Stage 5.gif',
   ),
 ];
@@ -151,7 +171,10 @@ final List<CycleStage> waterCycleStages = [
       'en': 'assets/audio/water_cycle/en/Pro-Evaporation.mp3',
       'es': 'assets/audio/water_cycle/es/Pro-Evaporacion.mp3',
     },
-    explanationAudio: 'assets/audio/water_cycle/stages/WCEX-S1-Evaporation.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/water_cycle/stages/en/WCEXen-S1-Evaporation.mp3',
+      'es': 'assets/audio/water_cycle/stages/es/WCEXes-S1-Evaporation.mp3',
+    },
   ),
   CycleStage(
     name: 'Condensation',
@@ -166,7 +189,10 @@ final List<CycleStage> waterCycleStages = [
       'en': 'assets/audio/water_cycle/en/Pro-Condensation.mp3',
       'es': 'assets/audio/water_cycle/es/Pro-Condensacion.mp3',
     },
-    explanationAudio: 'assets/audio/water_cycle/stages/WCEX-S2-Condensation.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/water_cycle/stages/en/WCEXen-S2-Condensation.mp3',
+      'es': 'assets/audio/water_cycle/stages/es/WCEXes-S2-Condensation.mp3',
+    },
   ),
   CycleStage(
     name: 'Precipitation',
@@ -181,7 +207,10 @@ final List<CycleStage> waterCycleStages = [
       'en': 'assets/audio/water_cycle/en/Pro-Precipitation.mp3',
       'es': 'assets/audio/water_cycle/es/Pro-Precipitacion.mp3',
     },
-    explanationAudio: 'assets/audio/water_cycle/stages/WCEX-S3-Precipitation.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/water_cycle/stages/en/WCEXen-S3-Precipitation.mp3',
+      'es': 'assets/audio/water_cycle/stages/es/WCEXes-S3-Precipitation.mp3',
+    },
   ),
     CycleStage(
     name: 'Groundwater flow',
@@ -193,10 +222,13 @@ final List<CycleStage> waterCycleStages = [
       'hi': 'भूमिगत जल प्रवाह',
     },
     audioAssets: {
-      'en': 'assets/audio/water_cycle/en/Pro-Groundwater.mp3',
-      'es': 'assets/audio/water_cycle/es/Pro-Fluodeaguasubterranea.mp3',
+      'en': 'assets/audio/water_cycle/en/Pro-Groundwaterflow.mp3',
+      'es': 'assets/audio/water_cycle/es/Pro-FlujodeAguaSubterranea.mp3',
     },
-    explanationAudio: 'assets/audio/water_cycle/stages/WCEX-S4-Groundwater.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/water_cycle/stages/en/WCEXen-S4-Groundwater.mp3',
+      'es': 'assets/audio/water_cycle/stages/es/WCEXes-S4-Groundwater.mp3',
+    },
   ),
   CycleStage(
     name: 'Collection',
@@ -211,7 +243,10 @@ final List<CycleStage> waterCycleStages = [
       'en': 'assets/audio/water_cycle/en/Pro-Collection.mp3',
       'es': 'assets/audio/water_cycle/es/Pro-Acumulacion.mp3',
     },
-    explanationAudio: 'assets/audio/water_cycle/stages/WCEX-S5-Collection.mp3',
+    explanationAudioAssets: {
+      'en': 'assets/audio/water_cycle/stages/en/WCEXen-S5-Collection.mp3',
+      'es': 'assets/audio/water_cycle/stages/es/WCEXes-S5-Collection.mp3',
+    },
   ),
 ];
 

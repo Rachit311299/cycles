@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import '../providers/cycle_provider.dart';
 import '../services/asset_preloader_service.dart';
 import './custom_button.dart';
+import 'bottom_switch_card.dart';
 import 'dart:async';
 
 class CycleView extends ConsumerStatefulWidget {
@@ -33,12 +34,14 @@ class CycleView extends ConsumerStatefulWidget {
 }
 
 class _CycleViewState extends ConsumerState<CycleView> {
-  final AudioPlayer _audioPlayer = AudioPlayer(); // For pronunciation
+  final AudioPlayer _audioPlayer = AudioPlayer();
   List<AudioPlayer>? _explanationPlayers;
   int _lastPlayedStageIndex = -1;
   String? _errorMessage;
   bool _isExplanationPlaying = false;
   int? _currentExplanationIndex;
+  BottomCardTab _currentTab = BottomCardTab.pronunciation;
+  Language _explanationLanguage = Language.en;
 
   @override
   void initState() {
@@ -46,18 +49,40 @@ class _CycleViewState extends ConsumerState<CycleView> {
     _initializeAudioPlayers();
   }
 
+  /// Initialize audio players for explanation audio with live subtitles
   void _initializeAudioPlayers() {
-    _explanationPlayers = AssetPreloaderService().getPreloadedPlayers(widget.cycleType);
+    _explanationPlayers = AssetPreloaderService()
+        .getPreloadedPlayers(widget.cycleType, _langCode(_explanationLanguage));
     
+    if (_explanationPlayers == null) {
+      final cycleNotifier = ref.read(widget.cycleProvider.notifier);
+      AssetPreloaderService().preloadCycleAssets(cycleNotifier.stages, widget.cycleType);
+      
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          setState(() {
+            _explanationPlayers = AssetPreloaderService()
+                .getPreloadedPlayers(widget.cycleType, _langCode(_explanationLanguage));
+            _setupPlayerListeners();
+          });
+        }
+      });
+    } else {
+      _setupPlayerListeners();
+    }
+  }
+
+  /// Setup listeners for audio completion to update subtitle state
+  void _setupPlayerListeners() {
     if (_explanationPlayers != null) {
       for (int i = 0; i < _explanationPlayers!.length; i++) {
         _explanationPlayers![i].playerStateStream.listen((state) {
-          if (state.processingState == ProcessingState.completed && mounted) {
+          if (_currentExplanationIndex == i && 
+              state.processingState == ProcessingState.completed && 
+              mounted) {
             setState(() {
-              if (_currentExplanationIndex == i) {
-                _isExplanationPlaying = false;
-                _currentExplanationIndex = null;
-              }
+              _isExplanationPlaying = false;
+              _currentExplanationIndex = null;
             });
           }
         });
@@ -94,34 +119,61 @@ class _CycleViewState extends ConsumerState<CycleView> {
     });
   }
 
+  /// Toggle explanation audio playback with subtitle synchronization
   Future<void> _toggleExplanationAudio(int stageIndex) async {
     if (_explanationPlayers == null || stageIndex >= _explanationPlayers!.length) return;
 
-    // If already playing this stage's explanation
-    if (_isExplanationPlaying && _currentExplanationIndex == stageIndex) {
-      // Pause it
-      _explanationPlayers![stageIndex].pause();
-      setState(() {
-        _isExplanationPlaying = false;
+    if (!_hasExplanationFor(stageIndex)) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Explanation not available in ${_langCode(_explanationLanguage).toUpperCase()}';
+        });
+      }
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() => _errorMessage = null);
+        }
       });
       return;
     }
 
-    // Stop any currently playing explanation audio
-    if (_isExplanationPlaying && _currentExplanationIndex != null) {
-      _explanationPlayers![_currentExplanationIndex!].stop();
+    final player = _explanationPlayers![stageIndex];
+    final playerState = player.playerState;
+
+    if (_currentExplanationIndex == stageIndex) {
+      if (playerState.playing) {
+        if (mounted) {
+          setState(() {
+            _isExplanationPlaying = false;
+          });
+        }
+        await player.pause();
+      } else {
+        if (mounted) {
+          setState(() {
+            _isExplanationPlaying = true;
+          });
+        }
+        await player.play();
+      }
+      return;
+    }
+
+    if (_currentExplanationIndex != null) {
+      await _explanationPlayers![_currentExplanationIndex!].stop();
     }
 
     try {
-      // Start the new explanation audio
-      await _explanationPlayers![stageIndex].seek(Duration.zero);
-      await _explanationPlayers![stageIndex].play();
-
-      setState(() {
-        _isExplanationPlaying = true;
-        _currentExplanationIndex = stageIndex;
-        _lastPlayedStageIndex = stageIndex;
-      });
+      if (mounted) {
+        setState(() {
+          _isExplanationPlaying = true;
+          _currentExplanationIndex = stageIndex;
+          _lastPlayedStageIndex = stageIndex;
+        });
+      }
+      
+      await player.seek(Duration.zero);
+      await player.play();
     } catch (e) {
       debugPrint('Error playing explanation audio: $e');
       if (mounted) {
@@ -134,9 +186,24 @@ class _CycleViewState extends ConsumerState<CycleView> {
     }
   }
 
+  String _langCode(Language lang) => lang == Language.es ? 'es' : 'en';
+
+  /// Check if explanation audio exists for current language
+  bool _hasExplanationFor(int index) {
+    final cycleNotifier = ref.read(widget.cycleProvider.notifier);
+    final stages = cycleNotifier.stages;
+    if (index < 0 || index >= stages.length) return false;
+    final stage = stages[index];
+    final code = _langCode(_explanationLanguage);
+    if (stage.explanationAudioAssets != null && stage.explanationAudioAssets!.containsKey(code)) {
+      return true;
+    }
+    if (code == 'en' && stage.explanationAudio != null) return true;
+    return false;
+  }
+
   Future<void> _playAudio(String audioAsset, String language) async {
     try {
-      // Pause explanation audio if it's playing
       if (_isExplanationPlaying && _currentExplanationIndex != null) {
         _explanationPlayers![_currentExplanationIndex!].pause();
       }
@@ -144,7 +211,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
       await _audioPlayer.setAsset(audioAsset);
       await _audioPlayer.play();
 
-      // Resume explanation audio after pronunciation is done
       _audioPlayer.playerStateStream.listen((state) {
         if (state.processingState == ProcessingState.completed &&
             _isExplanationPlaying &&
@@ -159,7 +225,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
           _errorMessage = 'Error playing audio: $e';
         });
 
-        // Auto-hide error after 3 seconds
         Future.delayed(const Duration(seconds: 3), () {
           if (mounted) {
             setState(() {
@@ -172,7 +237,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
   }
 
   Widget _buildImageOrAnimation(CycleStage stage) {
-    // Check if animation asset is available
     if (stage.animationAsset != null) {
       return Center(
         child: Stack(
@@ -188,10 +252,8 @@ class _CycleViewState extends ConsumerState<CycleView> {
                 stage.animationAsset!,
                 fit: BoxFit.contain,
                 alignment: Alignment.center,
-                // GIFs are automatically animated when loaded with Image.asset
                 errorBuilder: (context, error, stackTrace) {
                   debugPrint('Error loading animation: $error');
-                  // Fallback to static image if animation fails to load
                   if (stage.imageAsset.isNotEmpty) {
                     return Image.asset(
                       stage.imageAsset,
@@ -207,7 +269,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
         ),
       );
     } else {
-      // Use static image as fallback
       return Center(
         child: Stack(
           alignment: Alignment.center,
@@ -266,17 +327,12 @@ class _CycleViewState extends ConsumerState<CycleView> {
     final cycleNotifier = ref.read(widget.cycleProvider.notifier);
     final stages = cycleNotifier.stages;
 
-    // Check if stage has changed - stop audio if it was playing
     if (currentStageIndex != _lastPlayedStageIndex) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _stopAllAudio();
-
-        // Don't auto-play, just update the index
         _lastPlayedStageIndex = currentStageIndex;
       });
     }
-
-    // Boundary check
     if (currentStageIndex >= stages.length) {
       ref.read(widget.cycleProvider.notifier).reset();
       context.go('/');
@@ -303,7 +359,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
     }
 
     return PopScope(
-      // Make sure audio stops when using system back button
       onPopInvoked: (didPop) {
         if (didPop) {
           _stopAllAudio();
@@ -316,7 +371,6 @@ class _CycleViewState extends ConsumerState<CycleView> {
             children: [
               Column(
                 children: [
-                  // Top bar with close button and progress bar
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -353,254 +407,184 @@ class _CycleViewState extends ConsumerState<CycleView> {
                     ),
                   ),
 
-                  // Main content
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Column(
-                        children: [
-                          // Stage image with play/pause audio button
-                          Stack(
-                            children: [
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.45,
-                                width: MediaQuery.of(context).size.width * 0.85,
-                                decoration: BoxDecoration(
-                                  color: widget.imageBackgroundColor
-                                      .withOpacity(0.3),
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 5),
-                                    ),
-                                  ],
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    color: widget.imageBackgroundColor
-                                        .withOpacity(0.15),
-                                    child: Center(
-                                      child: SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                            0.75,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                            0.4,
-                                        child: _buildImageOrAnimation(
-                                          currentStage,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Play/Pause Explanation button
-                              Positioned(
-                                right: 10,
-                                bottom: 10,
-                                child: CustomButton(
-                                  height: 40,
-                                  width: 140,
-                                  cornerRadius: 20,
-                                  buttonColor: widget.buttonColor,
-                                  onPressed:
-                                      () => _toggleExplanationAudio(
-                                        currentStageIndex,
-                                      ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        _isExplanationPlaying &&
-                                                _currentExplanationIndex ==
-                                                    currentStageIndex
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      const Text(
-                                        'Explanation',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontFamily: 'PoetsenOne',
-                                        ),
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  height: MediaQuery.of(context).size.height * 0.35,
+                                  width: MediaQuery.of(context).size.width * 0.85,
+                                  decoration: BoxDecoration(
+                                    color: widget.imageBackgroundColor.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 5),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          // Language sections
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // English section
-                              const Center(
-                                child: Text(
-                                  'English',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.black54,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      color: widget.imageBackgroundColor.withOpacity(0.15),
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: MediaQuery.of(context).size.width * 0.75,
+                                          height: MediaQuery.of(context).size.height * 0.32,
+                                          child: _buildImageOrAnimation(currentStage),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  // Centered text
-                                  Center(
-                                    child: Text(
-                                      currentStage.name,
-                                      style: const TextStyle(
-                                        fontSize: 32,
-                                        fontFamily: 'PoetsenOne',
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  // Icon positioned to the right
-                                  Positioned(
-                                    right: 50,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.volume_up,
-                                        color: Colors.black87,
-                                      ),
-                                      onPressed: () {
-                                        if (currentStage.audioAssets != null &&
-                                            currentStage.audioAssets!
-                                                .containsKey('en')) {
-                                          _playAudio(
-                                            currentStage.audioAssets!['en']!,
-                                            'en',
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // Spanish section
-                              const Center(
-                                child: Text(
-                                  'Spanish',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  // Centered text
-                                  Center(
-                                    child: Text(
-                                      currentStage.translations['es'] ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 32,
-                                        fontFamily: 'PoetsenOne',
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  // Icon positioned to the right
-                                  Positioned(
-                                    right: 50,
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.volume_up,
-                                        color: Colors.black87,
-                                      ),
-                                      onPressed: () {
-                                        if (currentStage.audioAssets != null &&
-                                            currentStage.audioAssets!
-                                                .containsKey('es')) {
-                                          _playAudio(
-                                            currentStage.audioAssets!['es']!,
-                                            'es',
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          // Navigation buttons at the bottom
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Previous button
-                                if (currentStageIndex > 0)
-                                  CustomButton(
-                                    height: 56,
-                                    width: 56,
-                                    cornerRadius: 12,
-                                    buttonColor: widget.buttonColor,
-                                    icon: Icons.arrow_back_ios_new,
-                                    onPressed: () {
-                                      _stopAllAudio();
-                                      cycleNotifier.previousStage();
-                                    },
-                                  )
-                                else
-                                  const SizedBox(width: 56),
-
-                                // Next button or Complete button
-                                if (currentStageIndex < stages.length - 1)
-                                  CustomButton(
-                                    height: 56,
-                                    width: 56,
-                                    cornerRadius: 12,
-                                    buttonColor: widget.buttonColor,
-                                    icon: Icons.arrow_forward_ios,
-                                    onPressed: () {
-                                      _stopAllAudio();
-                                      cycleNotifier.nextStage();
-                                    },
-                                  )
-                                else
-                                  CustomButton(
-                                    height: 56,
-                                    width: 120,
-                                    cornerRadius: 12,
-                                    buttonColor: widget.buttonColor,
-                                    text: 'Complete',
-                                    onPressed: _handleComplete,
-                                  ),
                               ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: 2,
+                              decoration: BoxDecoration(
+                                color: widget.buttonColor.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(1),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            BottomSwitchCard(
+                              accentColor: widget.buttonColor,
+                              tab: _currentTab,
+                              widthFactor: 0.9,
+                              pronunciation: PronunciationData(
+                                englishWord: currentStage.name,
+                                spanishWord: currentStage.translations['es'] ?? '',
+                                hasEnglishAudio: currentStage.audioAssets?.containsKey('en') == true,
+                                hasSpanishAudio: currentStage.audioAssets?.containsKey('es') == true,
+                              ),
+                              // Pass audio player and subtitle path for live subtitles
+                              explanation: ExplanationData(
+                                englishText: currentStage.description,
+                                spanishText: currentStage.description,
+                                selectedLanguage: _explanationLanguage,
+                                audioPlayer: _explanationPlayers != null && currentStageIndex < _explanationPlayers!.length 
+                                    ? _explanationPlayers![currentStageIndex] 
+                                    : null,
+                                subtitlesPath: currentStage.explanationSubtitles,
+                              ),
+                              onExplanationLanguageChanged: (lang) {
+                                final wasPlaying = _isExplanationPlaying;
+                                final currentIndex = _currentExplanationIndex;
+
+                                if (_explanationPlayers != null && currentIndex != null) {
+                                  _explanationPlayers![currentIndex].pause();
+                                }
+
+                                setState(() {
+                                  _explanationLanguage = lang;
+                                  _isExplanationPlaying = false;
+                                });
+
+                                final code = _langCode(lang);
+                                final newPlayers = AssetPreloaderService()
+                                    .getPreloadedPlayers(widget.cycleType, code);
+                                if (newPlayers != null) {
+                                  setState(() {
+                                    _explanationPlayers = newPlayers;
+                                  });
+                                  _setupPlayerListeners();
+                                  if (wasPlaying && currentIndex != null && currentIndex < newPlayers.length) {
+                                    _toggleExplanationAudio(currentIndex);
+                                  }
+                                } else {
+                                  Future.delayed(const Duration(milliseconds: 300), () {
+                                    if (!mounted) return;
+                                    final readyPlayers = AssetPreloaderService()
+                                        .getPreloadedPlayers(widget.cycleType, code);
+                                    if (readyPlayers != null) {
+                                      setState(() {
+                                        _explanationPlayers = readyPlayers;
+                                      });
+                                      _setupPlayerListeners();
+                                      if (wasPlaying && currentIndex != null && currentIndex < readyPlayers.length) {
+                                        _toggleExplanationAudio(currentIndex);
+                                      }
+                                    }
+                                  });
+                                }
+                              },
+                              onPlayEnglishPronunciation: () {
+                                if (currentStage.audioAssets != null &&
+                                    currentStage.audioAssets!.containsKey('en')) {
+                                  _playAudio(currentStage.audioAssets!['en']!, 'en');
+                                }
+                              },
+                              onPlaySpanishPronunciation: () {
+                                if (currentStage.audioAssets != null &&
+                                    currentStage.audioAssets!.containsKey('es')) {
+                                  _playAudio(currentStage.audioAssets!['es']!, 'es');
+                                }
+                              },
+                              isExplanationPlaying: _isExplanationPlaying && _currentExplanationIndex == currentStageIndex,
+                              onToggleExplanationPlay: () => _toggleExplanationAudio(currentStageIndex),
+                            ),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 20.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  if (currentStageIndex > 0)
+                                    CustomButton(
+                                      height: 56,
+                                      width: 56,
+                                      cornerRadius: 12,
+                                      buttonColor: widget.buttonColor,
+                                      icon: Icons.arrow_back_ios_new,
+                                      onPressed: () {
+                                        _stopAllAudio();
+                                        cycleNotifier.previousStage();
+                                      },
+                                    )
+                                  else
+                                    const SizedBox(width: 56),
+                                  if (currentStageIndex < stages.length - 1)
+                                    CustomButton(
+                                      height: 56,
+                                      width: 56,
+                                      cornerRadius: 12,
+                                      buttonColor: widget.buttonColor,
+                                      icon: Icons.arrow_forward_ios,
+                                      onPressed: () {
+                                        _stopAllAudio();
+                                        cycleNotifier.nextStage();
+                                      },
+                                    )
+                                  else
+                                    CustomButton(
+                                      height: 56,
+                                      width: 120,
+                                      cornerRadius: 12,
+                                      buttonColor: widget.buttonColor,
+                                      text: 'Complete',
+                                      onPressed: _handleComplete,
+                                    ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
 
-              // Error message at the bottom
               if (_errorMessage != null)
                 Positioned(
                   bottom: 0,

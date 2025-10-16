@@ -81,10 +81,47 @@ flutter:
     - assets/audio/plant_cycle/en/
     - assets/audio/plant_cycle/es/
     - assets/audio/plant_cycle/stages/
+    - assets/audio/plant_cycle/stages/en/
+    - assets/audio/plant_cycle/stages/es/
     - assets/audio/water_cycle/
     - assets/audio/water_cycle/en/
     - assets/audio/water_cycle/es/
     - assets/audio/water_cycle/stages/    
+    - assets/audio/water_cycle/stages/en/
+    - assets/audio/water_cycle/stages/es/
+    - assets/audio/rock_cycle/
+    - assets/audio/rock_cycle/en/
+    - assets/audio/rock_cycle/es/
+    - assets/audio/rock_cycle/stages/
+    - assets/audio/rock_cycle/stages/en/
+    - assets/audio/rock_cycle/stages/es/
+    - assets/audio/season_cycle/
+    - assets/audio/season_cycle/en/
+    - assets/audio/season_cycle/es/
+    - assets/audio/season_cycle/stages/
+    - assets/audio/season_cycle/stages/en/
+    - assets/audio/season_cycle/stages/es/
+    - assets/audio/butterfly_cycle/
+    - assets/audio/butterfly_cycle/en/
+    - assets/audio/butterfly_cycle/es/
+    - assets/audio/butterfly_cycle/stages/
+    - assets/audio/butterfly_cycle/stages/en/
+    - assets/audio/butterfly_cycle/stages/es/
+    - assets/audio/frog_cycle/
+    - assets/audio/frog_cycle/en/
+    - assets/audio/frog_cycle/es/
+    - assets/audio/frog_cycle/stages/
+    - assets/audio/frog_cycle/stages/en/
+    - assets/audio/frog_cycle/stages/es/
+    - assets/audio/day_night_cycle/
+    - assets/audio/day_night_cycle/en/
+    - assets/audio/day_night_cycle/es/
+    - assets/audio/day_night_cycle/stages/
+    - assets/audio/day_night_cycle/stages/en/
+    - assets/audio/day_night_cycle/stages/es/
+    - assets/subtitles/
+    - assets/subtitles/plant_cycle/
+    - assets/subtitles/plant_cycle/stages/
   fonts:
     - family: PoetsenOne
       fonts:
