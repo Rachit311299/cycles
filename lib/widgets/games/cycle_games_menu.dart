@@ -19,6 +19,11 @@ class CycleGamesMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine if background is dark to use appropriate icon/text color
+    final isDarkBackground = ThemeData.estimateBrightnessForColor(backgroundColor) == Brightness.dark;
+    final textColor = isDarkBackground ? Colors.white : Colors.black87;
+    final subtextColor = isDarkBackground ? Colors.white70 : Colors.black54;
+
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
@@ -30,16 +35,16 @@ class CycleGamesMenu extends StatelessWidget {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                    icon: Icon(Icons.arrow_back, color: textColor),
                     onPressed: () => context.pop(),
                   ),
                   Expanded(
                     child: Text(
                       '$cycleTitle Games',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontFamily: 'PoetsenOne',
-                        color: Colors.black87,
+                        color: textColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -48,11 +53,11 @@ class CycleGamesMenu extends StatelessWidget {
                 ],
               ),
             ),
-            const Text(
+            Text(
               'Choose a game to play',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black54,
+                color: subtextColor,
                 fontFamily: 'PoetsenOne',
               ),
             ),

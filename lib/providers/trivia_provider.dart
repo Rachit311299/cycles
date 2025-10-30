@@ -407,4 +407,87 @@ final dayNightCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
       explanation: 'The day and night cycle is caused by the Earth\'s rotation on its axis, which makes different parts of Earth face the sun at different times.',
     ),
   ];
+});
+
+final moonCycleTriviaProvider = Provider<List<TriviaQuestion>>((ref) {
+  return [
+    TriviaQuestion(
+      question: 'What is the first stage of the moon cycle?',
+      options: ['Full Moon', 'New Moon', 'First Quarter', 'Waxing Crescent'],
+      correctAnswerIndex: 1,
+      explanation: 'The moon cycle begins with the New Moon, when the moon is not visible from Earth.',
+    ),
+    TriviaQuestion(
+      question: 'What does "waxing" mean in moon phases?',
+      options: [
+        'The moon is getting smaller',
+        'The moon is getting larger',
+        'The moon is full',
+        'The moon is disappearing'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Waxing means the moon is growing larger, appearing to increase in size.',
+    ),
+    TriviaQuestion(
+      question: 'How many phases does the moon cycle have?',
+      options: ['4', '6', '8', '12'],
+      correctAnswerIndex: 2,
+      explanation: 'The moon cycle has 8 distinct phases: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, and Waning Crescent.',
+    ),
+    TriviaQuestion(
+      question: 'What phase comes after Full Moon?',
+      options: [
+        'New Moon',
+        'Waning Gibbous',
+        'Waxing Gibbous',
+        'First Quarter'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'After Full Moon, the moon enters the Waning Gibbous phase, where it starts to decrease in illumination.',
+    ),
+    TriviaQuestion(
+      question: 'What does "waning" mean in moon phases?',
+      options: [
+        'The moon is getting larger',
+        'The moon is getting smaller',
+        'The moon is full',
+        'The moon is at quarter'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'Waning means the moon is shrinking, appearing to decrease in size.',
+    ),
+    TriviaQuestion(
+      question: 'How long does a complete moon cycle take?',
+      options: [
+        'About 7 days',
+        'About 14 days',
+        'About 29.5 days',
+        'About 365 days'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'A complete moon cycle (lunar month) takes approximately 29.5 days.',
+    ),
+    TriviaQuestion(
+      question: 'What phase occurs when half of the moon is visible?',
+      options: [
+        'Full Moon',
+        'Crescent',
+        'Quarter Moon',
+        'New Moon'
+      ],
+      correctAnswerIndex: 2,
+      explanation: 'Quarter Moon phases (First Quarter and Last Quarter) occur when half of the moon is visible.',
+    ),
+    TriviaQuestion(
+      question: 'During which phase is the entire moon visible?',
+      options: [
+        'New Moon',
+        'Full Moon',
+        'Quarter Moon',
+        'Crescent Moon'
+      ],
+      correctAnswerIndex: 1,
+      explanation: 'During Full Moon, the entire face of the moon is illuminated and visible from Earth.',
+    ),
+  ];
 }); 

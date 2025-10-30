@@ -577,6 +577,82 @@ final appRouter = GoRouter(
         },
       ),
     ),
+    // Moon Cycle Routes
+    GoRoute(
+      path: '/moon-cycle',
+      builder: (context, state) => const CycleMenuView(
+        title: 'Moon Cycle',
+        backgroundColor: Color(0xFFF0E6FF),
+        buttonColor: Color(0xFF7C4DFF),
+        cycleType: 'moon',
+      ),
+    ),
+    GoRoute(
+      path: '/moon-cycle/learn',
+      builder: (context, state) => CycleView(
+        title: 'Moon Cycle',
+        backgroundColor: const Color(0xFFF0E6FF),
+        progressBarColor: const Color(0xFF7C4DFF),
+        imageBackgroundColor: const Color(0xFF7C4DFF),
+        buttonColor: const Color(0xFF7C4DFF),
+        cycleType: 'moon',
+        cycleProvider: moonCycleProvider,
+      ),
+    ),
+    GoRoute(
+      path: '/moon-cycle/games',
+      builder: (context, state) => CycleGamesMenu(
+        cycleTitle: 'Moon Cycle',
+        backgroundColor: const Color(0xFFF0E6FF),
+        buttonColor: const Color(0xFF7C4DFF),
+        games: [
+          GameOption(
+            title: 'Cycle Builder',
+            description: 'Arrange the stages in correct order',
+            icon: Icons.sort,
+            route: '/moon-cycle/games/builder',
+          ),
+        ],
+      ),
+    ),
+    GoRoute(
+      path: '/moon-cycle/trivia',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final questions = ref.watch(moonCycleTriviaProvider);
+          return CycleTriviaGame(
+            title: 'Moon Cycle Trivia',
+            backgroundColor: const Color(0xFFF0E6FF),
+            buttonColor: const Color(0xFF7C4DFF),
+            questions: questions,
+            cycleType: 'moon',
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: '/moon-cycle/games/builder',
+      builder: (context, state) => Consumer(
+        builder: (context, ref, child) {
+          final cycleNotifier = ref.read(moonCycleProvider.notifier);
+          return CycleBuilderGame(
+            title: 'Moon Cycle Builder',
+            backgroundColor: const Color(0xFFF0E6FF),
+            buttonColor: const Color(0xFF7C4DFF),
+            cycleType: 'moon',
+            stages: cycleNotifier.stages
+                .map(
+                  (stage) => CycleStageItem(
+                    name: stage.name,
+                    imageAsset: stage.imageAsset,
+                    correctOrder: cycleNotifier.stages.indexOf(stage),
+                  ),
+                )
+                .toList(),
+          );
+        },
+      ),
+    ),
   ],
   redirect: (context, state) => null,
   errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Page not found!')))

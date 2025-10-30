@@ -16,7 +16,7 @@ class MyApp extends ConsumerWidget {
     // Watch the current theme mode from Riverpod
     final themeMode = ref.watch(themeModeProvider);
 
-    return MaterialApp.router(
+    return MaterialApp.router( 
       title: 'Cycles',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme, // Light theme

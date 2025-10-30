@@ -69,6 +69,7 @@ flutter:
     - assets/animations/
     - assets/animations/plant_cycle/
     - assets/animations/season_cycle/
+    - assets/animations/moon_cycle/
     - assets/images/plant_cycle/
     - assets/images/water_cycle/
     - assets/images/rock_cycle/
@@ -76,6 +77,7 @@ flutter:
     - assets/images/butterfly_cycle/
     - assets/images/frog_cycle/
     - assets/images/day_night_cycle/
+    - assets/images/moon_cycle/
     - assets/audio/
     - assets/audio/plant_cycle/
     - assets/audio/plant_cycle/en/
@@ -119,6 +121,12 @@ flutter:
     - assets/audio/day_night_cycle/stages/
     - assets/audio/day_night_cycle/stages/en/
     - assets/audio/day_night_cycle/stages/es/
+    - assets/audio/moon_cycle/
+    - assets/audio/moon_cycle/en/
+    - assets/audio/moon_cycle/es/
+    - assets/audio/moon_cycle/stages/
+    - assets/audio/moon_cycle/stages/en/
+    - assets/audio/moon_cycle/stages/es/
     - assets/subtitles/
     - assets/subtitles/plant_cycle/
     - assets/subtitles/plant_cycle/stages/

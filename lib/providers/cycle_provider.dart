@@ -51,6 +51,10 @@ final dayNightCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
   return CycleNotifier(stages: dayNightCycleStages);
 });
 
+final moonCycleProvider = StateNotifierProvider<CycleNotifier, int>((ref) {
+  return CycleNotifier(stages: moonCycleStages);
+});
+
 // Define stages for each cycle
 final List<CycleStage> plantCycleStages = [
   CycleStage(
@@ -573,5 +577,136 @@ final List<CycleStage> dayNightCycleStages = [
     },
     explanationAudio: 'assets/audio/day_night_cycle/stages/DNCEX-S5-Night.mp3',
     animationAsset: 'assets/animations/day_night_cycle/DayNightCycle_Stage5.gif',
+  ),
+];
+
+final List<CycleStage> moonCycleStages = [
+  CycleStage(
+    name: 'New Moon',
+    description: 'The moon is not visible from Earth as it is positioned between Earth and the sun.',
+    imageAsset: 'assets/images/moon_cycle/new_moon.png',
+    translations: {
+      'es': 'Luna Nueva',
+      'fr': 'Nouvelle Lune',
+      'hi': 'अमावस्या',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-NewMoon.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-LunaNueva.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S1-NewMoon.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage1.gif',
+  ),
+  CycleStage(
+    name: 'Waxing Crescent',
+    description: 'A small sliver of the moon becomes visible, appearing to grow from the right side.',
+    imageAsset: 'assets/images/moon_cycle/waxing_crescent.png',
+    translations: {
+      'es': 'Creciente Creciente',
+      'fr': 'Premier Croissant',
+      'hi': 'वृद्धि होती अर्धचंद्र',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-WaxingCrescent.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-CrecienteCreciente.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S2-WaxingCrescent.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage2.gif',
+  ),
+  CycleStage(
+    name: 'First Quarter',
+    description: 'Half of the moon is illuminated, appearing as a half circle. Also called half moon.',
+    imageAsset: 'assets/images/moon_cycle/first_quarter.png',
+    translations: {
+      'es': 'Cuarto Creciente',
+      'fr': 'Premier Quartier',
+      'hi': 'पहला चौथाई',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-FirstQuarter.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-CuartoCreciente.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S3-FirstQuarter.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage3.gif',
+  ),
+  CycleStage(
+    name: 'Waxing Gibbous',
+    description: 'More than half of the moon is illuminated, continuing to grow toward full moon.',
+    imageAsset: 'assets/images/moon_cycle/waxing_gibbous.png',
+    translations: {
+      'es': 'Gibosa Creciente',
+      'fr': 'Gibbeuse Croissante',
+      'hi': 'वृद्धि होती गिबस',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-WaxingGibbous.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-GibosaCreciente.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S4-WaxingGibbous.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage4.gif',
+  ),
+  CycleStage(
+    name: 'Full Moon',
+    description: 'The entire face of the moon is illuminated and appears as a complete circle in the night sky.',
+    imageAsset: 'assets/images/moon_cycle/full_moon.png',
+    translations: {
+      'es': 'Luna Llena',
+      'fr': 'Pleine Lune',
+      'hi': 'पूर्णिमा',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-FullMoon.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-LunaLlena.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S5-FullMoon.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage5.gif',
+  ),
+  CycleStage(
+    name: 'Waning Gibbous',
+    description: 'The moon starts to decrease in illumination, appearing to shrink from the left side.',
+    imageAsset: 'assets/images/moon_cycle/waning_gibbous.png',
+    translations: {
+      'es': 'Gibosa Menguante',
+      'fr': 'Gibbeuse Décroissante',
+      'hi': 'घटती गिबस',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-WaningGibbous.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-GibosaMenguante.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S6-WaningGibbous.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage6.gif',
+  ),
+  CycleStage(
+    name: 'Last Quarter',
+    description: 'Half of the moon is illuminated, but now on the opposite side from the first quarter.',
+    imageAsset: 'assets/images/moon_cycle/last_quarter.png',
+    translations: {
+      'es': 'Cuarto Menguante',
+      'fr': 'Dernier Quartier',
+      'hi': 'अंतिम चौथाई',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-LastQuarter.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-CuartoMenguante.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S7-LastQuarter.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage7.gif',
+  ),
+  CycleStage(
+    name: 'Waning Crescent',
+    description: 'A small sliver of the moon remains visible, appearing to shrink until it becomes a new moon again.',
+    imageAsset: 'assets/images/moon_cycle/waning_crescent.png',
+    translations: {
+      'es': 'Creciente Menguante',
+      'fr': 'Dernier Croissant',
+      'hi': 'घटती अर्धचंद्र',
+    },
+    audioAssets: {
+      'en': 'assets/audio/moon_cycle/en/Pro-WaningCrescent.mp3',
+      'es': 'assets/audio/moon_cycle/es/Pro-CrecienteMenguante.mp3',
+    },
+    explanationAudio: 'assets/audio/moon_cycle/stages/MCEX-S8-WaningCrescent.mp3',
+    animationAsset: 'assets/animations/moon_cycle/MoonCycle_Stage8.gif',
   ),
 ];

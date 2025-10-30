@@ -327,6 +327,10 @@ class _CycleViewState extends ConsumerState<CycleView> {
     final cycleNotifier = ref.read(widget.cycleProvider.notifier);
     final stages = cycleNotifier.stages;
 
+    // Determine if background is dark to use appropriate icon/text color
+    final isDarkBackground = ThemeData.estimateBrightnessForColor(widget.backgroundColor) == Brightness.dark;
+    final iconColor = isDarkBackground ? Colors.white : Colors.black87;
+
     if (currentStageIndex != _lastPlayedStageIndex) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _stopAllAudio();
@@ -376,7 +380,7 @@ class _CycleViewState extends ConsumerState<CycleView> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.close, color: Colors.black87),
+                          icon: Icon(Icons.close, color: iconColor),
                           onPressed: _handleClose,
                         ),
                         Expanded(

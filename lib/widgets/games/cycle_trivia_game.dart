@@ -107,6 +107,11 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
     final percentage = correctAnswers / widget.questions.length;
     final isHighScore = percentage >= 0.7;
 
+    // Determine if background is dark to use appropriate text colors
+    final isDarkBackground = ThemeData.estimateBrightnessForColor(widget.backgroundColor) == Brightness.dark;
+    final textColor = isDarkBackground ? Colors.white : Colors.black87;
+    final subtextColor = isDarkBackground ? Colors.white70 : Colors.black54;
+
     // Calculate XP
     final gameKey = 'trivia_${widget.cycleType}';
     final xpData = ref.read(xpDataProvider);
@@ -217,9 +222,9 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                           ),
                           Text(
                             '$correctAnswers/${widget.questions.length}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
-                              color: Colors.black54,
+                              color: subtextColor,
                             ),
                           ),
                         ],
@@ -232,19 +237,19 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
               
               Text(
                 'Quiz Complete!',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 28,
                   fontFamily: 'PoetsenOne',
-                  color: Colors.black87,
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 16),
               
               Text(
                 _getResultMessage(percentage),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black54,
+                  color: subtextColor,
                   height: 1.3,
                 ),
                 textAlign: TextAlign.center,
@@ -316,10 +321,10 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                         context.pop(); // Close dialog
                         context.pop(); // Return to games menu
                       },
-                      child: const Text(
+                      child: Text(
                         'Exit',
                         style: TextStyle(
-                          color: Colors.black87,
+                          color: textColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -372,6 +377,11 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
   @override
   Widget build(BuildContext context) {
     final question = widget.questions[currentQuestionIndex];
+    
+    // Determine if background is dark to use appropriate icon/text color
+    final isDarkBackground = ThemeData.estimateBrightnessForColor(widget.backgroundColor) == Brightness.dark;
+    final textColor = isDarkBackground ? Colors.white : Colors.black87;
+    final subtextColor = isDarkBackground ? Colors.white70 : Colors.black54;
 
     return Scaffold(
       backgroundColor: widget.backgroundColor,
@@ -395,7 +405,7 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                          icon: Icon(Icons.arrow_back, color: textColor),
                           onPressed: () => context.pop(),
                         ),
                         Expanded(
@@ -403,18 +413,18 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                             children: [
                               Text(
                                 widget.title,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontFamily: 'PoetsenOne',
-                                  color: Colors.black87,
-                                ),
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'PoetsenOne',
+                                color: textColor,
+                              ),
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Question ${currentQuestionIndex + 1} of ${widget.questions.length}',
                                 style: TextStyle(
-                                  color: Colors.black54,
+                                  color: subtextColor,
                                   fontSize: 16,
                                   fontFamily: 'PoetsenOne',
                                 ),
@@ -464,12 +474,12 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                       ),
                       child: Text(
                         question.question,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontFamily: 'PoetsenOne',
-                          color: Colors.black87,
-                          height: 1.4,
-                        ),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontFamily: 'PoetsenOne',
+                        color: textColor,
+                        height: 1.4,
+                      ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -556,7 +566,7 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                                         style: TextStyle(
                                           color: isSelected || isCorrect || isWrong
                                               ? Colors.white
-                                              : Colors.black87,
+                                              : textColor,
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500,
                                           height: 1.2,
@@ -617,13 +627,13 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                                   size: 24,
                                 ),
                                 const SizedBox(width: 8),
-                                const Text(
+                                Text(
                                   'Explanation',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'PoetsenOne',
-                                    color: Colors.black87,
+                                    color: textColor,
                                   ),
                                 ),
                               ],
@@ -631,9 +641,9 @@ class _CycleTriviaGameState extends ConsumerState<CycleTriviaGame> {
                             const SizedBox(height: 12),
                             Text(
                               question.explanation!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black87,
+                                color: textColor,
                                 height: 1.4,
                               ),
                             ),

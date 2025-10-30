@@ -256,6 +256,12 @@ class HomePage extends ConsumerWidget {
                       textColor: const Color(0xFFE8EAF6),
                       onTap: () => context.push('/day-night-cycle'),
                     ),
+                    CycleCard(
+                      title: 'Moon Cycle',
+                      backgroundImage: 'assets/images/moon_cycle.jpg',
+                      textColor: const Color(0xFFE8EAF6),
+                      onTap: () => context.push('/moon-cycle'),
+                    ),
                     
                   ],
                 ),

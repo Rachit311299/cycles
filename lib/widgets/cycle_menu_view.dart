@@ -54,6 +54,8 @@ class _CycleMenuViewState extends ConsumerState<CycleMenuView> {
         return frogCycleProvider;
       case 'day-night':
         return dayNightCycleProvider;
+      case 'moon':
+        return moonCycleProvider;
       default:
         return null;
     }
@@ -67,6 +69,10 @@ class _CycleMenuViewState extends ConsumerState<CycleMenuView> {
 
   @override
   Widget build(BuildContext context) {
+    // Determine if background is dark to use appropriate icon/text color
+    final isDarkBackground = ThemeData.estimateBrightnessForColor(widget.backgroundColor) == Brightness.dark;
+    final textColor = isDarkBackground ? Colors.white : Colors.black87;
+
     return Scaffold(
       backgroundColor: widget.backgroundColor,
       body: SafeArea(
@@ -78,16 +84,16 @@ class _CycleMenuViewState extends ConsumerState<CycleMenuView> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                    icon: Icon(Icons.arrow_back, color: textColor),
                     onPressed: () => context.go('/'),
                   ),
                   Expanded(
                     child: Text(
                       widget.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontFamily: 'PoetsenOne',
-                        color: Colors.black87,
+                        color: textColor,
                       ),
                       textAlign: TextAlign.center,
                     ),

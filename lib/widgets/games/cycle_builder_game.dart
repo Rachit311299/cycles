@@ -319,6 +319,10 @@ class _CycleBuilderGameState extends ConsumerState<CycleBuilderGame> {
 
   @override
   Widget build(BuildContext context) {
+    // Determine if background is dark to use appropriate icon/text color
+    final isDarkBackground = ThemeData.estimateBrightnessForColor(widget.backgroundColor) == Brightness.dark;
+    final textColor = isDarkBackground ? Colors.white : Colors.black87;
+
     return Scaffold(
       backgroundColor: widget.backgroundColor,
       body: SafeArea(
@@ -330,16 +334,16 @@ class _CycleBuilderGameState extends ConsumerState<CycleBuilderGame> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                    icon: Icon(Icons.arrow_back, color: textColor),
                     onPressed: () => context.pop(),
                   ),
                   Expanded(
                     child: Text(
                       widget.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontFamily: 'PoetsenOne',
-                        color: Colors.black87,
+                        color: textColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -509,7 +513,7 @@ class _CycleBuilderGameState extends ConsumerState<CycleBuilderGame> {
             style: TextStyle(
               color: isIncorrect
                   ? Colors.red
-                  : isDragging ? Colors.white : Colors.black87,
+                  : isDragging ? Colors.white : (ThemeData.estimateBrightnessForColor(widget.backgroundColor) == Brightness.dark ? Colors.white : Colors.black87),
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
